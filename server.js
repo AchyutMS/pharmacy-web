@@ -3,11 +3,17 @@ const app = express();
 require('dotenv').config();
 const dbConfig = require('./config/dbConfig');
 
-const userRoute = require('./routes/userRoute');
+const adminRoute = require('./routes/adminRoute');
+const operatorRoute = require('./routes/operatorRoute');
+const salesmanRoute = require('./routes/salesmanRoute');
+const storeRoute = require('./routes/storeRoute');
 
 //Middlewares
 app.use(express.json());
-app.use("/api/user", userRoute);
+app.use('/api/admin', adminRoute);
+app.use("/api/operator", operatorRoute);
+app.use("/api/salesman", salesmanRoute);
+app.use("/api/store", storeRoute);
 
 //API Endpoints
 const port = process.env.PORT || 5000;

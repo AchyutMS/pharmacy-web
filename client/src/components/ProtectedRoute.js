@@ -13,7 +13,7 @@ function ProtectedRoute(props) {
       try {
         //dispatch(showLoading())
         const response = await axios.post(
-          "/api/user/get-user-info-by-id",
+          "/api/operator/get-operator-info-by-id",
           { token: localStorage.getItem("token") },
           {
             headers: {
@@ -21,15 +21,16 @@ function ProtectedRoute(props) {
             },
           }
         );
-        console.log(response)
         //dispatch(hideLoading());
         if (response.data.success) {
           dispatch(setOperator(response.data.data));
         } else {
+          console.log('error',response);
           localStorage.clear()
           navigate("/login");
         }
       } catch (error) {
+        console.log('catch',error)
         //dispatch(hideLoading());
         localStorage.clear()
         navigate("/login");
@@ -41,7 +42,7 @@ function ProtectedRoute(props) {
         getUser();
       }
     }, [operator]);
-    console.log("User",operator);
+    console.log("Operator Info",operator);
     if (localStorage.getItem("token")) {
       return props.children;
     } else {

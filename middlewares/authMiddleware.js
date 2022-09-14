@@ -5,10 +5,10 @@ module.exports = async (req,res,next) => {
         const token = req.headers["authorization"].split(" ")[1];
         jwt.verify(token,process.env.JWT_SECRET_KEY, (err, decoded) => {
             if(err){
-                return res.status(401).send({message:" Auth Failed", success: false, err});
+                return res.status(401).send({message:"Auth Failed", success: false, err});
             }
             else {
-                req.body.userId = decoded.id;
+                req.body.operatorId = decoded.id;
                 next();
             }
         });

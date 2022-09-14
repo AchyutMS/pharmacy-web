@@ -1,10 +1,13 @@
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
+import NavDropdown from 'react-bootstrap/NavDropdown';
 
 import { useNavigate } from 'react-router-dom'; 
+import { useSelector } from 'react-redux';
 
 function Layout() {
+    const {operator} = useSelector((state) => state.operator);
     const navigate = useNavigate();
     const logout = () => {
         localStorage.removeItem('token');
@@ -22,23 +25,48 @@ function Layout() {
         }
     ];
 
-    const userMenu = [
+    const seniorMenu = [
+      {
+          name: 'senior_menu1',
+          path: '/',
+      },
+      {
+          name: 'senior_menu2',
+          path: '/'
+      }
+  ];
+
+  const storeMenu = [
+    {
+        name: 'store_menu1',
+        path: '/',
+    },
+    {
+        name: 'store_menu2',
+        path: '/'
+    }
+];
+    const salesmanMenu = [
         {
-            name: 'user_menu1',
-            path: '/',
+            name: 'OP Bill',
+            path: '/op-pharmacy-billing',
         },
         {
-            name: 'user_menu2',
+            name: 'Stock',
             path: '/'
+        },
+        {
+            name: 'Store',
+            path: '/store'
         }
     ];
 
-    const menuToBeRendered = userMenu;
+    const menuToBeRendered = operator && operator.role === "admin" ? adminMenu : operator && operator.role === "senior" ? seniorMenu : operator && operator.role === "store" ? storeMenu : salesmanMenu;
 
   return (
     <Navbar collapseOnSelect expand="lg" bg="primary" variant="dark">
       <Container>
-        <Navbar.Brand href="#home">SIMS</Navbar.Brand>
+        <Navbar.Brand href="/">SIMS</Navbar.Brand>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="me-auto">
@@ -49,10 +77,14 @@ function Layout() {
             })}
           </Nav>
           <Nav>
-            <Nav.Link href="#deets">More deets</Nav.Link>
-            <Nav.Link eventKey={2} onClick={logout}>
-              Logout
-            </Nav.Link>
+            <NavDropdown title={operator && operator.name} id="collasible-nav-dropdown">
+              {operator && operator.role === "admin" && <NavDropdown.Item href="/operators">Operators</NavDropdown.Item>}
+              <NavDropdown.Item href="#action/3.3">Profile</NavDropdown.Item>
+              <NavDropdown.Divider />
+              <NavDropdown.Item onClick={logout}>
+                Logout
+              </NavDropdown.Item>
+            </NavDropdown>
           </Nav>
         </Navbar.Collapse>
 

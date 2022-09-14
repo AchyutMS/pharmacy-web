@@ -31,9 +31,10 @@ function Login() {
     let login = async () => {
         try {
           dispatch(showLoading());
-          const response = await axios.post('/api/user/login', state.user);
+          const response = await axios.post('/api/operator/login', state.user);
           dispatch(hideLoading());
           if(response.data.success) {
+            console.log('LOGIN SUCCESS');
             toast.success(response.data.message);
             localStorage.setItem('token', response.data.token);
             navigate('/');
@@ -62,7 +63,7 @@ function Login() {
               <Form.Control onChange={updateInput} type="password" name="password" placeholder="Enter Password"></Form.Control>
             </Form.Group>
             <Button onClick={login} className="btn btn-primary btn-block">Sign In</Button>
-            <a href='/register' className='text-secondary mt-5 p-3 text-center'>Create an Account</a>
+            <a href='/register-operator' className='text-secondary mt-5 p-3 text-center'>Create an Account</a>
           </Form>
         </Col>
       </Row>
