@@ -13,7 +13,8 @@ function NewBill() {
   const patient = JSON.parse(sessionStorage.getItem("patient"));
 
   const { operator } = useSelector((state) => state.operator);
-  const [itemMaster, setItemMaster] = useState();
+  const [itemMaster, setItemMaster] = useState([]);
+  const [itemBatch, setItemBatch] = useState([]);
   const [search, setSearch] = useState("");
 
   const [prescription, setPrescription] = useState([]);
@@ -29,13 +30,15 @@ function NewBill() {
 
   const getAllItemMaster = async () => {
     try {
-      const response = await axios.get("/api/store/get-all-item-master", {
+      const response = await axios.get("/api/store/get-all-item-details", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
       if (response.data.success) {
-        setItemMaster(response.data.data);
+        console.log(response)
+        setItemMaster(response.data.data[0]);
+        setItemBatch(response.data.data[1]);
       }
     } catch (error) {
       console.log(error);
@@ -73,7 +76,8 @@ function NewBill() {
       },
     });
   };
-
+console.log(itemMaster && itemMaster)
+console.log(itemBatch && itemBatch)
   return (
     <>
       <Layout />
