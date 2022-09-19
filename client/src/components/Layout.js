@@ -53,7 +53,7 @@ function Layout() {
         },
         {
             name: 'Stock',
-            path: '/'
+            path: '/stock'
         },
         {
             name: 'Store',

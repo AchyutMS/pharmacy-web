@@ -41,4 +41,36 @@ router.get("/get-all-item-details", authMiddleware, async (req, res) => {
   }
 });
 
+router.post("/get-all-items-from-category", authMiddleware, async (req, res) => {
+  try {
+    const category = await ItemGroup.findOne({id: req.body.categoryId});
+    const items = await ItemMaster.find({categoryid: req.body.categoryId});
+    res.status(200).send({message:"Items from Category fetched successfully", success: true, data: [category.name,items]});
+  } catch (error) {
+    console.log(error);
+    res
+      .status(500)
+      .send({ message: "Error getting Items from Category", success: false, error });
+  }
+});
+
+//Stock
+router.get("/get-all-item-batch", authMiddleware, async (req, res) => {
+  try {
+    const itemBatch = await ItemBatch.find({});
+    res
+      .status(200)
+      .send({
+        message: "Item Batch fetched successfully",
+        success: true,
+        data: itemBatch,
+      });
+  } catch (error) {
+    console.log(error);
+    res
+      .status(500)
+      .send({ message: "Error getting Item Batch", success: false, error });
+  }
+});
+
 module.exports = router;

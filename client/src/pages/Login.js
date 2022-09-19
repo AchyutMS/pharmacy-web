@@ -63,7 +63,7 @@ function Login() {
               <Form.Control onChange={updateInput} type="password" name="password" placeholder="Enter Password"></Form.Control>
             </Form.Group>
             <Button onClick={login} className="btn btn-primary btn-block">Sign In</Button>
-            <a href='/register-operator' className='text-secondary mt-5 p-3 text-center'>Create an Account</a>
+            <a href='/register-operator' className='text-secondary mt-5 p-3 text-center'>Click here for support</a>
           </Form>
         </Col>
       </Row>

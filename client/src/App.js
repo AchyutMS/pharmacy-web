@@ -10,14 +10,16 @@ import Operators from "./pages/Admin/Operators";
 
 import OpPharmacyBilling from "./pages/Salesman/OpPharmacyBilling";
 import RegisterPatient from "./pages/Salesman/RegisterPatient";
-import PatientRecords from "./pages/Salesman/PatientRecords";
 import NewBill from "./pages/Salesman/NewBill";
 import Store from "./pages/Store";
+import CategoryMedicines from "./pages/CategoryMedicines";
+import Stock from './pages/Stock';
 
 import PublicRoute from "./components/PublicRoute";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 import { useSelector } from 'react-redux';
+
 
 function App() {
   const { loading } = useSelector((state) => state.alerts);
@@ -38,9 +40,10 @@ function App() {
         <Route path="/operators" element={<ProtectedRoute> <Operators /> </ProtectedRoute>} />
         <Route path="/op-pharmacy-billing" element={<ProtectedRoute> <OpPharmacyBilling /> </ProtectedRoute>} />
         <Route path="/register-patient" element={<ProtectedRoute> <RegisterPatient /> </ProtectedRoute>} />
-        <Route path="/patient-records" element={<ProtectedRoute> <PatientRecords /> </ProtectedRoute>} />
         <Route path="/new-bill" element={<ProtectedRoute> <NewBill /> </ProtectedRoute>} />
         <Route path="/store" element={<ProtectedRoute> <Store /> </ProtectedRoute>} />
+        <Route path="/category-medicines" element={<ProtectedRoute> <CategoryMedicines /> </ProtectedRoute>} />
+        <Route path="/stock" element={<ProtectedRoute> <Stock /> </ProtectedRoute>} />
       </Routes>
     </BrowserRouter>
   );

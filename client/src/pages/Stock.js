@@ -5,65 +5,65 @@ import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import Table from 'react-bootstrap/Table';
 
-function Store() {
-  const [ itemGroup, setItemGroup] = useState([]);
+function Stock() {
+  const [ itemBatch, setItemBatch] = useState([]);
   const navigate = useNavigate();
 
-  const getAllMedicineCategories = async () => {
+  const getAllItemBatch = async () => {
     try {
-      const response = await axios.get("/api/store/get-all-item-group", {
+      const response = await axios.get("/api/store/get-all-item-batch", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`
         },
       });
       if (response.data.success) {
-        setItemGroup(response.data.data);
+        setItemBatch(response.data.data);
       }
     } catch (error) {
       console.log(error);
     }
   }
   
-  const handleCategoryMedicine = (itemId) => {
-    sessionStorage.setItem('category', itemId);
-    // navigate('/category-medicines',{state:{id:itemId}});
-    navigate('/category-medicines');
-  }
+//   const handleCategoryMedicine = (itemId) => {
+//     sessionStorage.setItem('category', itemId);
+//     // navigate('/category-medicines',{state:{id:itemId}});
+//     navigate('/category-medicines');
+//   }
 
-  console.log(itemGroup)
+  console.log(itemBatch)
   
   useEffect(() => {
-    getAllMedicineCategories();
+    getAllItemBatch();
   },[]);
 
   return (
     <>
       <Layout />
-      <h1 className="shadow-sm text-primary mt-5 p-3">Store</h1>
+      <h1 className="shadow-sm text-primary mt-5 p-3">Batch</h1>
 
       <Table striped bordered hover>
       <thead>
         <tr>
-          <th>ID</th>
-          <th>Name</th>
-          <th>Parent</th>
+          {/* <th>ID</th> */}
+          <th>Batch No</th>
+          {/* <th>Parent</th>
           <th>Modified Date</th>
           <th>Blocked</th>
-          <th>Pers_catid</th>
+          <th>Pers_catid</th> */}
         </tr>
       </thead>
       <tbody>
 
         {
-          itemGroup && itemGroup.map((item) => {
+          itemBatch && itemBatch.map((item) => {
             return (
-            <tr key={item._id} onClick={()=> handleCategoryMedicine(item.id)}>
-              <td>{item.id}</td>
-              <td>{item.name}</td>
+            <tr key={item._id}>
+              <td>{item.BatchNo}</td>
+              {/* <td>{item.name}</td>
               <td>{item.parent}</td>
               <td>{item.ModifiedDate}</td>
               <td>{item.blocked}</td>
-              <td>{item.pers_catid}</td>
+              <td>{item.pers_catid}</td> */}
             </tr>
             )
           })
@@ -76,4 +76,4 @@ function Store() {
   )
 }
 
-export default Store
+export default Stock
