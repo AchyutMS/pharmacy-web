@@ -73,4 +73,23 @@ router.get("/get-all-item-batch", authMiddleware, async (req, res) => {
   }
 });
 
+router.post("/get-all-batch-from-itemId", authMiddleware, async (req, res) => {
+  console.log(req.body.itemId)
+  try {
+    let itemBatch = await ItemBatch.find({id: req.body.itemId});
+    const item = await ItemMaster.findOne({id: req.body.itemId});
+    itemBatch = itemBatch.sort(function(a, b) {
+      var c = new Date(a.ExpiryDate);
+      var d = new Date(b.ExpiryDate);
+      return c-d;
+  });
+    res.status(200).send({message:"Batched from Items fetched successfully", success: true, data: [item.name, itemBatch]});
+  } catch (error) {
+    console.log(error);
+    res
+      .status(500)
+      .send({ message: "Error getting Items from Category", success: false, error });
+  }
+});
+
 module.exports = router;

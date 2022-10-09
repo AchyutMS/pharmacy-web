@@ -2,12 +2,15 @@ import React, { useState, useEffect } from 'react'
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
+import { Row, Col, Form } from "react-bootstrap";
+
 import Layout from '../components/Layout';
 import Table from 'react-bootstrap/Table';
 
 function Store() {
   const [ itemGroup, setItemGroup] = useState([]);
   const navigate = useNavigate();
+  const [search, setSearch] = useState("");
 
   const getAllMedicineCategories = async () => {
     try {
@@ -26,7 +29,6 @@ function Store() {
   
   const handleCategoryMedicine = (itemId) => {
     sessionStorage.setItem('category', itemId);
-    // navigate('/category-medicines',{state:{id:itemId}});
     navigate('/category-medicines');
   }
 
@@ -40,6 +42,25 @@ function Store() {
     <>
       <Layout />
       <h1 className="shadow-sm text-primary mt-5 p-3">Store</h1>
+
+      <Form>
+        <Form.Group
+          as={Row}
+          className="mb-3"
+          controlId="formPlaintextPhoneNumber"
+        >
+          <Col sm="3">
+            <Form.Control
+              name="search"
+              type="text"
+              placeholder="Category Name"
+              onChange={(e) => setSearch(e.target.value.toLowerCase())}
+            />
+
+          </Col>
+        </Form.Group>
+      </Form>
+
 
       <Table striped bordered hover>
       <thead>
@@ -55,7 +76,9 @@ function Store() {
       <tbody>
 
         {
-          itemGroup && itemGroup.map((item) => {
+          itemGroup && itemGroup
+          .filter((item) => item.name && item.name.toLowerCase().includes(search))
+          .map((item) => {
             return (
             <tr key={item._id} onClick={()=> handleCategoryMedicine(item.id)}>
               <td>{item.id}</td>
