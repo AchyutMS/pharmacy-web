@@ -3,10 +3,13 @@ import axios from "axios";
 
 import { useSelector, useDispatch } from "react-redux";
 import { Row, Col, Form, Button } from "react-bootstrap";
+import Table from "react-bootstrap/Table";
 import Card from "react-bootstrap/Card";
 
 import Layout from "../../components/Layout";
-import Table from "react-bootstrap/Table";
+import BatchModal from "./BatchModal";
+
+
 
 function NewBill() {
   //const { patient } = useSelector((state) => state.patient);
@@ -18,6 +21,11 @@ function NewBill() {
   const [search, setSearch] = useState("");
 
   const [prescription, setPrescription] = useState([]);
+  const [modalShow, setModalShow] = useState(false);
+  const [selectedItem, setSelectedItem] = useState();
+
+  const [idArray, setIdArray] = useState([]);
+  const [totalAmount, setTotalAmount] = useState(0);
 
   let [state, setState] = useState({
     user: {
@@ -76,8 +84,35 @@ function NewBill() {
       },
     });
   };
-console.log(itemMaster && itemMaster)
-console.log(itemBatch && itemBatch)
+
+  function handleRemove(id,item) {
+    let newList = prescription.filter((item) => item._id !== id);
+    setPrescription(newList);
+
+    newList = idArray.filter((item) => item !== id);
+    setIdArray(newList);
+
+    setTotalAmount(totalAmount-parseFloat(item.MRP));
+  }
+
+  function selectBatch(item) {
+    setSelectedItem(item);
+    setModalShow(true);
+  }
+
+  function addPrescription(selectedItem) {
+    if (prescription && idArray.includes(selectedItem._id) === false) {
+      setPrescription([...prescription, selectedItem]);
+      setIdArray([...idArray, selectedItem._id]);
+      setTotalAmount(totalAmount + parseFloat(selectedItem.MRP));
+    }
+    setModalShow(false);
+  }
+
+// console.log(itemMaster && itemMaster)
+// console.log(itemBatch && itemBatch)
+console.log("prescription",prescription && prescription)
+console.log("idArray",idArray && idArray)
   return (
     <>
       <Layout />
@@ -149,11 +184,12 @@ console.log(itemBatch && itemBatch)
                   .map((item) => (
                     <Card.Body
                       key={item._id}
-                      onClick={() => {
-                        if (prescription.includes(item) === false) {
-                          setPrescription([...prescription, item]);
-                        }
-                      }}
+                      // onClick={() => {
+                      //   if (prescription && prescription.includes(item) === false) {
+                      //     setPrescription([...prescription, item]);
+                      //   }
+                      // }}
+                      onClick={() => selectBatch(item)}
                     >
                       {item.name}
                     </Card.Body>
@@ -164,7 +200,16 @@ console.log(itemBatch && itemBatch)
             <Table striped bordered hover>
               <thead>
                 <tr>
-                  <th>Name</th>
+                  <th>Item Name</th>
+                  <th>Batch</th>
+                  <th>Qty</th>
+                  <th>Price</th>
+                  {/* <th>Basic Amount</th> */}
+                  <th>D[%]</th>
+                  <th>Dis. Amt</th>
+                  <th>Tax %</th>
+                  <th>Tax</th>
+                  <th>Amount</th>
                   <th>Action</th>
                 </tr>
               </thead>
@@ -174,17 +219,20 @@ console.log(itemBatch && itemBatch)
                     return (
                       <tr key={item._id}>
                         <td>{item.name}</td>
+                        <td>{item.BatchNo}</td>
+                        <td>-</td>
+                        <td>{item.MRP}</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>{item.MRP + item.Tax}</td>
+                        {/* <td>-</td> */}
                         <td>
                           <Button
                             variant="primary"
                             size="sm"
-                            onClick={() =>
-                              setPrescription((prev) =>
-                                prev.filter(
-                                  (cart_item) => cart_item._id !== item._id
-                                )
-                              )
-                            }
+                            onClick={() => handleRemove(item._id,item)}
                           >
                             Delete
                           </Button>
@@ -202,6 +250,16 @@ console.log(itemBatch && itemBatch)
           </Col>
         </Form.Group>
       </Form>
+
+      <h2 className="shadow-sm text-primary mt-5 p-3">Total Amount: Rs. {Math.round(totalAmount)}
+      </h2>
+
+      <BatchModal
+        show={modalShow}
+        onHide={() => setModalShow(false)}
+        item = {selectedItem}
+        addPrescription = {addPrescription}
+      />
     </>
   );
 }

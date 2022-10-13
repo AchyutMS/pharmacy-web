@@ -36,7 +36,7 @@ function Batch() {
         getAllMedicines();
     },[]);
 
-    console.log(itemName,batchItems)
+    console.log(itemName,batchItems);
 
   return (
     <>
