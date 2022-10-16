@@ -29,9 +29,9 @@ function NewBill() {
 
   let [state, setState] = useState({
     user: {
-      name: "",
-      age: "",
-      sex: "",
+      name: patient.name,
+      age: patient.age,
+      sex: patient.sex,
       doctorReffered: '',
     },
   });
@@ -72,8 +72,12 @@ function NewBill() {
   }
 
   useEffect(() => {
-    getAllItemMaster();
-  }, []);
+    if(itemMaster.length == 0){
+      getAllItemMaster();
+    }
+    calculateTotalAmount();
+  }, [prescription]);
+
 
   let updateInput = (e) => {
     setState({
@@ -85,14 +89,26 @@ function NewBill() {
     });
   };
 
+  const calculateTotalAmount = () => {
+    let total = 0;
+    prescription.map(item => {
+      if(item.required_quantity){
+        total += (parseFloat(item.MRP) * parseFloat(item.required_quantity));
+      } else {
+        total += (parseFloat(item.MRP));
+      }
+    })
+    setTotalAmount(total);
+  }
+
   function handleRemove(id,item) {
     let newList = prescription.filter((item) => item._id !== id);
     setPrescription(newList);
 
     newList = idArray.filter((item) => item !== id);
     setIdArray(newList);
-
-    setTotalAmount(totalAmount-parseFloat(item.MRP));
+    calculateTotalAmount();
+    //setTotalAmount(totalAmount-parseFloat(item.MRP));
   }
 
   function selectBatch(item) {
@@ -104,10 +120,30 @@ function NewBill() {
     if (prescription && idArray.includes(selectedItem._id) === false) {
       setPrescription([...prescription, selectedItem]);
       setIdArray([...idArray, selectedItem._id]);
-      setTotalAmount(totalAmount + parseFloat(selectedItem.MRP));
+      calculateTotalAmount();
+      //setTotalAmount(totalAmount + parseFloat(selectedItem.MRP));
     }
     setModalShow(false);
   }
+
+  const handleQuantity = (id,quantity) => {
+    console.log('handlequantity')
+    const newState = prescription.map(obj => {
+      // 👇️ if id equals 2, update country property
+      if (obj._id === id) {
+        //setTotalAmount(totalAmount  + parseFloat(obj.MRP)* quantity);
+        calculateTotalAmount();
+        return {...obj, required_quantity: quantity};
+      }
+
+      // 👇️ otherwise return object as is
+      return obj;
+    });
+
+    setPrescription(newState);
+  };
+
+
 
 // console.log(itemMaster && itemMaster)
 // console.log(itemBatch && itemBatch)
@@ -125,7 +161,7 @@ console.log("idArray",idArray && idArray)
               onChange={updateInput}
               name="name"
               type="text"
-              placeholder="Enter name"
+              placeholder={patient.name}
             />
           </Col>
 
@@ -134,7 +170,7 @@ console.log("idArray",idArray && idArray)
               onChange={updateInput}
               name="age"
               type="number"
-              placeholder="Enter age"
+              placeholder={patient.age}
             />
           </Col>
 
@@ -144,7 +180,7 @@ console.log("idArray",idArray && idArray)
               name="sex"
               onChange={updateInput}
             >
-              <option value="">Select Sex</option>
+              <option value="">{patient.sex}</option>
               <option value="male">Male</option>
               <option value="female">Female</option>
               <option value="others">Others</option>
@@ -157,6 +193,7 @@ console.log("idArray",idArray && idArray)
               name="doctorReffered"
               type="text"
               placeholder="Doctor Reffered"
+              required
             />
           </Col>
         </Form.Group>
@@ -220,13 +257,20 @@ console.log("idArray",idArray && idArray)
                       <tr key={item._id}>
                         <td>{item.name}</td>
                         <td>{item.BatchNo}</td>
-                        <td>-</td>
+                        <td>
+                          <input
+                            type="number"
+                            value = {!item.hasOwnProperty("required_quantity") ? handleQuantity(item._id, 1) : item.required_quantity<=parseInt(item.Quantity) && item.required_quantity>0 ? item.required_quantity : parseInt(item.Quantity)}
+                            required
+                            onChange={(e)=> handleQuantity(item._id, e.target.value)}
+                          />
+                        </td>
                         <td>{item.MRP}</td>
                         <td>-</td>
                         <td>-</td>
                         <td>-</td>
                         <td>-</td>
-                        <td>{item.MRP + item.Tax}</td>
+                        <td>{(parseFloat(item.MRP) * parseFloat(item.required_quantity))}</td>
                         {/* <td>-</td> */}
                         <td>
                           <Button
@@ -251,7 +295,7 @@ console.log("idArray",idArray && idArray)
         </Form.Group>
       </Form>
 
-      <h2 className="shadow-sm text-primary mt-5 p-3">Total Amount: Rs. {Math.round(totalAmount)}
+      <h2 className="shadow-sm text-primary mt-5 p-3">Total Amount: Rs. {totalAmount}
       </h2>
 
       <BatchModal
