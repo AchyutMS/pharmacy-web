@@ -33,6 +33,7 @@ function NewBill() {
       age: patient.age,
       sex: patient.sex,
       doctorReffered: '',
+      service: 'none',
     },
   });
 
@@ -66,6 +67,7 @@ function NewBill() {
       if (response.data.success) {
         console.log("response",response.data.data);
       }
+      window.location.reload(true)
     } catch (error) {
       console.log(error);
     }
@@ -76,7 +78,7 @@ function NewBill() {
       getAllItemMaster();
     }
     calculateTotalAmount();
-  }, [prescription]);
+  }, [prescription, state.user]);
 
 
   let updateInput = (e) => {
@@ -88,14 +90,16 @@ function NewBill() {
       },
     });
   };
+  console.log(state,"state val")
 
   const calculateTotalAmount = () => {
     let total = 0;
     prescription.map(item => {
       if(item.required_quantity){
-        total += (parseFloat(item.MRP) * parseFloat(item.required_quantity));
+        total += Math.round(((item.MRP * item.required_quantity)-(item.discountAmount))*100)/100
+        console.log(typeof(total),"printing type")
       } else {
-        total += (parseFloat(item.MRP));
+        total += Math.round((item.MRP-item.discountAmount)*100)/100
       }
     })
     setTotalAmount(total);
@@ -187,6 +191,18 @@ console.log("idArray",idArray && idArray)
             </Form.Select>
           </Col>
 
+          <Col sm="2">
+            <Form.Select
+              aria-label="Default select example"
+              name="service"
+              onChange={updateInput}
+            >
+              <option value="none">none</option>
+              <option value="student">student</option>
+              <option value="employee">employee</option>
+            </Form.Select>
+          </Col>
+
           <Col sm="4">
             <Form.Control
               onChange={updateInput}
@@ -253,24 +269,29 @@ console.log("idArray",idArray && idArray)
               <tbody>
                 {prescription &&
                   prescription.map((item) => {
+                    console.log(state.user,"user data")
+                    var cost = (parseFloat(item.MRP) * parseFloat(item.required_quantity))
+                    item.discountPer = state.user.service !== "none" ? cost > 100 ? cost > 1000 ? 20 : 10 : 0 : 0
+                    item.discountAmount = cost * item.discountPer/100
                     return (
                       <tr key={item._id}>
                         <td>{item.name}</td>
                         <td>{item.BatchNo}</td>
                         <td>
+                          {console.log(item.required_quantity,"item quantity")}
                           <input
                             type="number"
-                            value = {!item.hasOwnProperty("required_quantity") ? handleQuantity(item._id, 1) : item.required_quantity<=parseInt(item.Quantity) && item.required_quantity>0 ? item.required_quantity : parseInt(item.Quantity)}
                             required
                             onChange={(e)=> handleQuantity(item._id, e.target.value)}
+                            value = {!item.hasOwnProperty("required_quantity") ? handleQuantity(item._id, 1) : item.required_quantity<=parseInt(item.Quantity) && item.required_quantity>0 ? item.required_quantity : parseInt(item.Quantity)}
                           />
                         </td>
-                        <td>{item.MRP}</td>
+                        <td>{parseFloat(item.MRP).toFixed(2)}</td>
+                        <td>{item.discountPer}</td>
+                        <td>{parseFloat(item.discountAmount).toFixed(2)}</td>
                         <td>-</td>
                         <td>-</td>
-                        <td>-</td>
-                        <td>-</td>
-                        <td>{(parseFloat(item.MRP) * parseFloat(item.required_quantity))}</td>
+                        <td>{parseFloat((parseFloat(item.MRP) * parseFloat(item.required_quantity))-(item.discountAmount)).toFixed(2)}</td>
                         {/* <td>-</td> */}
                         <td>
                           <Button
