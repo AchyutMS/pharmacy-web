@@ -20,6 +20,7 @@ import PublicRoute from "./components/PublicRoute";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 import { useSelector } from 'react-redux';
+import PatientRecord from "./pages/Salesman/PatientRecord";
 
 
 function App() {
@@ -46,6 +47,7 @@ function App() {
         <Route path="/category-medicines" element={<ProtectedRoute> <CategoryMedicines /> </ProtectedRoute>} />
         <Route path="/stock" element={<ProtectedRoute> <Stock /> </ProtectedRoute>} />
         <Route path="/batch" element={<ProtectedRoute> <Batch /> </ProtectedRoute>} />
+        <Route path="/patient-record/:id" element={<ProtectedRoute> <PatientRecord /> </ProtectedRoute>} />
       </Routes>
     </BrowserRouter>
   );

@@ -106,8 +106,8 @@ function OpPharmacyBilling() {
         {/* </a> */}
       </div>
 
-          {patient.records.prescriptions && patient.records.prescriptions.map((prescription) => (
-            <Card body className="mb-2">{prescription.patient.name}</Card>
+          {patient.records.prescriptions && patient.records.prescriptions.map((prescription,prescriptionId) => (
+            <Card body className="mb-2" onClick={()=> navigate(`/patient-record/${prescriptionId}`)}>{prescription.patient.name}</Card>
           ))}
         </>
       }

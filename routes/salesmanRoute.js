@@ -55,4 +55,20 @@ router.post('/generate-bill', authMiddleware, async (req, res) => {
     }
 })
 
+router.get('/get-prescription-detail/:userId/:prescriptionId', authMiddleware, async (req, res) => {
+    try {
+        const userId = req.params.userId;
+        const prescriptionId = req.params.prescriptionId;
+
+        const patient = await Patient.findOne({_id: userId})
+        const response = patient.records.prescriptions[prescriptionId]
+        console.log(response)
+        res.status(200).send({ message: "Prescription details Fetched successfully", success: true, data: response});
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({message: "Error getting precription details", success: false, error});
+    }
+})
+
+
 module.exports = router;
