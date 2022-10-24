@@ -135,7 +135,12 @@ function NewBill() {
     const newState = prescription.map(obj => {
       // 👇️ if id equals 2, update country property
       if (obj._id === id) {
-        //setTotalAmount(totalAmount  + parseFloat(obj.MRP)* quantity);
+        if(parseInt(quantity) < 1 || parseInt(quantity) > parseInt(obj.Auantity)){
+          quantity = 1
+        }
+        else if(quantity == "") {
+          quantity = 1
+        }
         calculateTotalAmount();
         return {...obj, required_quantity: quantity};
       }

@@ -10,7 +10,32 @@ import Layout from "../../components/Layout";
 import toast from "react-hot-toast";
 
 import { setPatient } from '../../redux/patientSlice';
-import {PrintPrescription} from '../../components/PrintPrescription';
+import PrintPrescription from '../../components/PrintPrescription';
+
+class ComponentToPrint extends React.Component {
+  render() {
+    return (
+      <div className='print-source'>
+        <PrintPrescription detail={this.props.detail}/>
+      </div>
+    );
+  }
+}
+
+
+class Print extends React.Component {
+  render() {
+    return (
+        <div>
+          <ReactToPrint
+            trigger={() => <a href="#">Print</a>}
+            content={() => this.componentRef}
+          />
+          <ComponentToPrint ref={el => (this.componentRef = el)} detail={this.props.detail}/>
+        </div>
+    );
+  }
+}
 
 function OpPharmacyBilling() {
     //const {patient} = useSelector((state) => state.patient);
@@ -55,8 +80,8 @@ function OpPharmacyBilling() {
     }, [patient]);
 
 
-    console.log(patient)
-    console.log(patient && patient.records.prescriptions)
+    // console.log(patient)
+    // console.log(patient && patient.records.prescriptions)
   return (
     <>
       <Layout />
@@ -117,12 +142,8 @@ function OpPharmacyBilling() {
                   <div className="p-2">{prescription.patient.name}</div>
                   <div className="p-2">
                     <div className="d-flex">
-                      <ReactToPrint 
-                        trigger = {() => <Button variant='warning' size='sm'>Print</Button>}
-                        content = {() => componentRef.current}
-                      />
-
-                        <Button variant="primary" size="sm" onClick={()=> navigate(`/patient-record/${prescriptionId}`)}>Edit</Button>
+                      <Print detail={prescription}/>
+                      <Button variant="primary" size="sm" onClick={()=> navigate(`/patient-record/${prescriptionId}`)}>Edit</Button>
 
                     </div>
                   </div>
@@ -133,9 +154,9 @@ function OpPharmacyBilling() {
             </div>
           ))}
 
-        <div className='d-none'>
+        {/* <div className='d-none'>
           <PrintPrescription ref={componentRef} />
-        </div>
+        </div> */}
         </>
       }
       
