@@ -15,6 +15,7 @@ import Store from "./pages/Store";
 import CategoryMedicines from "./pages/CategoryMedicines";
 import Stock from './pages/Stock';
 import Batch from './pages/Batch';
+import Profile from './pages/Profile';
 
 import PublicRoute from "./components/PublicRoute";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -48,6 +49,7 @@ function App() {
         <Route path="/stock" element={<ProtectedRoute> <Stock /> </ProtectedRoute>} />
         <Route path="/batch" element={<ProtectedRoute> <Batch /> </ProtectedRoute>} />
         <Route path="/patient-record/:id" element={<ProtectedRoute> <PatientRecord /> </ProtectedRoute>} />
+        <Route path="/profile" element={<ProtectedRoute> <Profile /> </ProtectedRoute>} />
       </Routes>
     </BrowserRouter>
   );

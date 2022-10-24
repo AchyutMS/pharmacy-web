@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from 'axios';
+import ReactToPrint from "react-to-print";
 import { useSelector, useDispatch } from "react-redux";
 import { Row, Col, Form, Button } from "react-bootstrap";
 import { useNavigate,Navigate } from "react-router-dom";
@@ -9,6 +10,7 @@ import Layout from "../../components/Layout";
 import toast from "react-hot-toast";
 
 import { setPatient } from '../../redux/patientSlice';
+import {PrintPrescription} from '../../components/PrintPrescription';
 
 function OpPharmacyBilling() {
     //const {patient} = useSelector((state) => state.patient);
@@ -18,6 +20,7 @@ function OpPharmacyBilling() {
     
     const [patient,setPatient] = useState(null) 
   
+    const componentRef = useRef();
   
 
     const getPatientDetails = async (e) => {
@@ -107,8 +110,32 @@ function OpPharmacyBilling() {
       </div>
 
           {patient.records.prescriptions && patient.records.prescriptions.map((prescription,prescriptionId) => (
-            <Card body className="mb-2" onClick={()=> navigate(`/patient-record/${prescriptionId}`)}>{prescription.patient.name}</Card>
+            <div >
+              <Card body className="mb-2">
+
+                <div className="d-flex justify-content-between">
+                  <div className="p-2">{prescription.patient.name}</div>
+                  <div className="p-2">
+                    <div className="d-flex">
+                      <ReactToPrint 
+                        trigger = {() => <Button variant='warning' size='sm'>Print</Button>}
+                        content = {() => componentRef.current}
+                      />
+
+                        <Button variant="primary" size="sm" onClick={()=> navigate(`/patient-record/${prescriptionId}`)}>Edit</Button>
+
+                    </div>
+                  </div>
+                </div>
+
+              </Card>
+              
+            </div>
           ))}
+
+        <div className='d-none'>
+          <PrintPrescription ref={componentRef} />
+        </div>
         </>
       }
       

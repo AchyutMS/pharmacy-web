@@ -5,6 +5,7 @@ import NavDropdown from 'react-bootstrap/NavDropdown';
 
 import { useNavigate } from 'react-router-dom'; 
 import { useSelector } from 'react-redux';
+import logo from '../sims-Logo-new.png';
 
 function Layout() {
     const {operator} = useSelector((state) => state.operator);
@@ -66,7 +67,9 @@ function Layout() {
   return (
     <Navbar collapseOnSelect expand="lg" bg="primary" variant="dark">
       <Container>
-        <Navbar.Brand href="/">SIMS</Navbar.Brand>
+        <Navbar.Brand href="/">
+          <img src={logo} alt="SIMS" className='img-thumbnail'  width="75"/>
+        </Navbar.Brand>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="me-auto">
@@ -79,10 +82,10 @@ function Layout() {
           <Nav>
             <NavDropdown title={operator && operator.name} id="collasible-nav-dropdown">
               {operator && operator.role === "admin" && <NavDropdown.Item href="/operators">Operators</NavDropdown.Item>}
-              <NavDropdown.Item href="#action/3.3">Profile</NavDropdown.Item>
+              <NavDropdown.Item href="/profile">Profile</NavDropdown.Item>
               <NavDropdown.Divider />
               <NavDropdown.Item onClick={logout}>
-                Logout
+                Logout  
               </NavDropdown.Item>
             </NavDropdown>
           </Nav>
