@@ -55,20 +55,24 @@ function PatientRecord() {
 
   const calculateTotalAmount = () => {
     let total = 0;
-    console.log("in")
     prescription.map(item => {
-      if(item.returnQty){
-        setTotalAmount(total + Math.round(((item.MRP * item.returnQty)-(item.returnAmount))*100)/100)
-      } else{
-        setTotalAmount(total)
+      if(item.required_quantity){
+        total += Math.round(((item.MRP * item.returnQty)-(item.returnAmount))*100)/100
+        console.log(typeof(total),"printing type")
+      } else {
+        total += 0
       }
     })
+    setTotalAmount(total);
   }
 
   const handleQuantity = async(id,quantity) => {
-    console.log('handlequantity')
+    console.log('handlequantity',quantity)
     const newState = prescription.map(obj => {
       if (obj._id === id) {
+        if(parseInt(quantity) < 0 || parseInt(quantity) > parseInt(obj.required_quantity)){
+          quantity = 0
+        }
         calculateTotalAmount();
         return {...obj, returnQty: parseInt(quantity)};
       }
