@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 import { useSelector, useDispatch } from "react-redux";
 import { Row, Col, Form, Button } from "react-bootstrap";
@@ -8,8 +9,6 @@ import Card from "react-bootstrap/Card";
 
 import Layout from "../../components/Layout";
 import BatchModal from "./BatchModal";
-
-
 
 function NewBill() {
   //const { patient } = useSelector((state) => state.patient);
@@ -27,13 +26,32 @@ function NewBill() {
   const [idArray, setIdArray] = useState([]);
   const [totalAmount, setTotalAmount] = useState(0);
 
+  let generateBillId = () => {
+    var today = new Date();
+    var date =
+      today.getFullYear() +
+      "-" +
+      (today.getMonth() + 1) +
+      "-" +
+      today.getDate();
+    var time =
+      today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+    var dateTime = date + " " + time;
+    return dateTime;
+  };
+
   let [state, setState] = useState({
     user: {
       name: patient.name,
       age: patient.age,
       sex: patient.sex,
-      doctorReffered: '',
-      service: 'none',
+      doctorReffered: "",
+      service: "none",
+    },
+    bill: {
+      billId: generateBillId(),
+      paymentMethod: "cash",
+      billDate: new Date().toJSON().slice(0, 10).replace(/-/g, "/"),
     },
   });
 
@@ -45,7 +63,7 @@ function NewBill() {
         },
       });
       if (response.data.success) {
-        console.log(response)
+        console.log(response);
         setItemMaster(response.data.data[0]);
         setItemBatch(response.data.data[1]);
       }
@@ -55,31 +73,41 @@ function NewBill() {
   };
 
   const generateBill = async () => {
-    console.log(patient,state.user,prescription)
+    console.log(patient, state.user, prescription);
     try {
-      const response = await axios.post("/api/salesman/generate-bill",
-      {patient: patient, sub_patient: state.user, prescription: prescription},
-       {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
-      if (response.data.success) {
-        console.log("response",response.data.data);
+      if (prescription.length === 0) {
+        toast.error("Prescription cannot be empty");
+      } else {
+        const response = await axios.post(
+          "/api/salesman/generate-bill",
+          {
+            patient: patient,
+            sub_patient: state.user,
+            bill_details: state.bill,
+            prescription: prescription,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+        if (response.data.success) {
+          console.log("response", response.data.data);
+        }
+        window.location.reload(true);
       }
-      window.location.reload(true)
     } catch (error) {
       console.log(error);
     }
-  }
+  };
 
   useEffect(() => {
-    if(itemMaster.length == 0){
+    if (itemMaster.length == 0) {
       getAllItemMaster();
     }
     calculateTotalAmount();
   }, [prescription, state.user]);
-
 
   let updateInput = (e) => {
     setState({
@@ -90,22 +118,25 @@ function NewBill() {
       },
     });
   };
-  console.log(state,"state val")
+  console.log(state, "state val");
 
   const calculateTotalAmount = () => {
     let total = 0;
-    prescription.map(item => {
-      if(item.required_quantity){
-        total += Math.round(((item.MRP * item.required_quantity)-(item.discountAmount))*100)/100
-        console.log(typeof(total),"printing type")
+    prescription.map((item) => {
+      if (item.required_quantity) {
+        total +=
+          Math.round(
+            (item.MRP * item.required_quantity - item.discountAmount) * 100
+          ) / 100;
+        console.log(typeof total, "printing type");
       } else {
-        total += Math.round((item.MRP-item.discountAmount)*100)/100
+        total += Math.round((item.MRP - item.discountAmount) * 100) / 100;
       }
-    })
+    });
     setTotalAmount(total);
-  }
+  };
 
-  function handleRemove(id,item) {
+  function handleRemove(id, item) {
     let newList = prescription.filter((item) => item._id !== id);
     setPrescription(newList);
 
@@ -130,19 +161,21 @@ function NewBill() {
     setModalShow(false);
   }
 
-  const handleQuantity = (id,quantity) => {
-    console.log('handlequantity')
-    const newState = prescription.map(obj => {
+  const handleQuantity = (id, quantity) => {
+    console.log("handlequantity");
+    const newState = prescription.map((obj) => {
       // 👇️ if id equals 2, update country property
       if (obj._id === id) {
-        if(parseInt(quantity) < 1 || parseInt(quantity) > parseInt(obj.Auantity)){
-          quantity = 1
-        }
-        else if(quantity == "") {
-          quantity = 1
+        if (
+          parseInt(quantity) < 1 ||
+          parseInt(quantity) > parseInt(obj.Auantity)
+        ) {
+          quantity = 1;
+        } else if (quantity == "") {
+          quantity = 1;
         }
         calculateTotalAmount();
-        return {...obj, required_quantity: quantity};
+        return { ...obj, required_quantity: quantity };
       }
 
       // 👇️ otherwise return object as is
@@ -152,12 +185,10 @@ function NewBill() {
     setPrescription(newState);
   };
 
-
-
-// console.log(itemMaster && itemMaster)
-// console.log(itemBatch && itemBatch)
-console.log("prescription",prescription && prescription)
-console.log("idArray",idArray && idArray)
+  // console.log(itemMaster && itemMaster)
+  // console.log(itemBatch && itemBatch)
+  console.log("prescription", prescription && prescription);
+  console.log("idArray", idArray && idArray);
   return (
     <>
       <Layout />
@@ -165,7 +196,7 @@ console.log("idArray",idArray && idArray)
 
       <Form>
         <Form.Group as={Row} className="mb-3" controlId="formPlaintextName">
-          <Col sm="2">
+          <Col sm="3">
             <Form.Control
               onChange={updateInput}
               name="name"
@@ -196,18 +227,20 @@ console.log("idArray",idArray && idArray)
             </Form.Select>
           </Col>
 
-          <Col sm="2">
+          <Col sm="3">
             <Form.Select
               aria-label="Default select example"
               name="service"
               onChange={updateInput}
             >
-              <option value="none">none</option>
+              <option value="none">Discount Type</option>
               <option value="student">student</option>
               <option value="employee">employee</option>
             </Form.Select>
           </Col>
+        </Form.Group>
 
+        <Form.Group as={Row} className="mb-3" controlId="formPlaintextName">
           <Col sm="4">
             <Form.Control
               onChange={updateInput}
@@ -216,6 +249,17 @@ console.log("idArray",idArray && idArray)
               placeholder="Doctor Reffered"
               required
             />
+          </Col>
+
+          <Col sm="2">
+            <Form.Select
+              aria-label="Default select example"
+              name="paymentMethod"
+              onChange={updateInput}
+            >
+              <option value="cash">cash</option>
+              <option value="card">card</option>
+            </Form.Select>
           </Col>
         </Form.Group>
       </Form>
@@ -274,21 +318,39 @@ console.log("idArray",idArray && idArray)
               <tbody>
                 {prescription &&
                   prescription.map((item) => {
-                    console.log(state.user,"user data")
-                    var cost = (parseFloat(item.MRP) * parseFloat(item.required_quantity))
-                    item.discountPer = state.user.service !== "none" ? cost > 100 ? cost > 1000 ? 20 : 10 : 0 : 0
-                    item.discountAmount = cost * item.discountPer/100
+                    console.log(state.user, "user data");
+                    var cost =
+                      parseFloat(item.MRP) * parseFloat(item.required_quantity);
+                    item.discountPer =
+                      state.user.service !== "none"
+                        ? cost > 100
+                          ? cost > 1000
+                            ? 20
+                            : 10
+                          : 0
+                        : 0;
+                    item.discountAmount = (cost * item.discountPer) / 100;
                     return (
                       <tr key={item._id}>
                         <td>{item.name}</td>
                         <td>{item.BatchNo}</td>
                         <td>
-                          {console.log(item.required_quantity,"item quantity")}
+                          {console.log(item.required_quantity, "item quantity")}
                           <input
                             type="number"
                             required
-                            onChange={(e)=> handleQuantity(item._id, e.target.value)}
-                            value = {!item.hasOwnProperty("required_quantity") ? handleQuantity(item._id, 1) : item.required_quantity<=parseInt(item.Quantity) && item.required_quantity>0 ? item.required_quantity : parseInt(item.Quantity)}
+                            onChange={(e) =>
+                              handleQuantity(item._id, e.target.value)
+                            }
+                            value={
+                              !item.hasOwnProperty("required_quantity")
+                                ? handleQuantity(item._id, 1)
+                                : item.required_quantity <=
+                                    parseInt(item.Quantity) &&
+                                  item.required_quantity > 0
+                                ? item.required_quantity
+                                : parseInt(item.Quantity)
+                            }
                           />
                         </td>
                         <td>{parseFloat(item.MRP).toFixed(2)}</td>
@@ -296,13 +358,19 @@ console.log("idArray",idArray && idArray)
                         <td>{parseFloat(item.discountAmount).toFixed(2)}</td>
                         <td>-</td>
                         <td>-</td>
-                        <td>{parseFloat((parseFloat(item.MRP) * parseFloat(item.required_quantity))-(item.discountAmount)).toFixed(2)}</td>
+                        <td>
+                          {parseFloat(
+                            parseFloat(item.MRP) *
+                              parseFloat(item.required_quantity) -
+                              item.discountAmount
+                          ).toFixed(2)}
+                        </td>
                         {/* <td>-</td> */}
                         <td>
                           <Button
                             variant="primary"
                             size="sm"
-                            onClick={() => handleRemove(item._id,item)}
+                            onClick={() => handleRemove(item._id, item)}
                           >
                             Delete
                           </Button>
@@ -312,7 +380,10 @@ console.log("idArray",idArray && idArray)
                   })}
               </tbody>
             </Table>
-            <div className="m-3 d-flex justify-content-end" onClick={generateBill}>
+            <div
+              className="m-3 d-flex justify-content-end"
+              onClick={generateBill}
+            >
               <Button variant="primary" size="sm">
                 Generate Bill
               </Button>
@@ -321,14 +392,15 @@ console.log("idArray",idArray && idArray)
         </Form.Group>
       </Form>
 
-      <h2 className="shadow-sm text-primary mt-5 p-3">Total Amount: Rs. {totalAmount}
+      <h2 className="shadow-sm text-primary mt-5 p-3">
+        Total Amount: Rs. {totalAmount}
       </h2>
 
       <BatchModal
         show={modalShow}
         onHide={() => setModalShow(false)}
-        item = {selectedItem}
-        addPrescription = {addPrescription}
+        item={selectedItem}
+        addPrescription={addPrescription}
       />
     </>
   );

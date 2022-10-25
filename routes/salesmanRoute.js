@@ -42,10 +42,10 @@ router.post('/get-patient-info-by-phone-number', authMiddleware, async (req, res
 
 router.post('/generate-bill', authMiddleware, async (req, res) => {
     try {
-        const { patient, sub_patient, prescription } = req.body;
+        const { patient, sub_patient, bill_details, prescription } = req.body;
         const update_patient = await Patient.findOne({_id: patient._id});
         const update_prescription = update_patient.records.prescriptions;
-        update_prescription.push({patient:sub_patient, prescription});
+        update_prescription.push({patient:sub_patient, billDetails:bill_details, prescription});
         await update_patient.save();
 
         res.status(200).send({ message: "Patient updated successfully", success: true, data: patient});

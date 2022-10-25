@@ -132,7 +132,11 @@ function OpPharmacyBilling() {
               <Card  body className="mb-2">
 
                 <div className="d-flex justify-content-between">
-                  <div className="p-2">{prescription.patient.name}</div>
+                  <div className="p-2">
+                    <b>{prescription.patient.name}</b>
+                    <div>{prescription.billDetails?.billId}</div>
+                  </div>
+                  
                   <div className="p-2">
                     <div className="d-flex" >
                     

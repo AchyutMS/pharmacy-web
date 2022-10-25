@@ -3,34 +3,27 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import { Container, Row, Col, Form, Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import Layout from '../components/Layout';
+import { showLoading, hideLoading } from '../redux/alertsSlice';
 
-// import { showLoading, hideLoading } from '../../redux/alertsSlice';
 
 function Profile() {
   const { operator } = useSelector((state) => state.operator);
-
     const dispatch = useDispatch();
     const navigate = useNavigate();
+
+
     let [state, setState] = useState({
         user: {
-            name:operator.name,
-            email:operator.email,
-            phoneNumber:operator.phoneNumber,
-            role: 'salesman',
-            password:operator.password,
+            name:operator?.name,
+            email:operator?.email,
+            phoneNumber:operator?.phoneNumber,
+            role: operator?.role,
+            password:'',
         }
     });
-
-    const getUserInfo = () => {
-      
-    }
-
-    useEffect(()=> {
-      getUserInfo();
-    },[]);
 
     let updateInput = (e) => {
         setState({
@@ -42,11 +35,12 @@ function Profile() {
         })
     }
 
-    let register = async () => {
-        console.log(state.user);
+
+    let updateProfile = async () => {
         try{
+          console.log(state.user)
             // dispatch(showLoading());
-            const response = await axios.post('/api/admin/register', state.user, 
+            const response = await axios.post('/api/operator/update-operator-profile', {user: setState.user}, 
               {
                 headers: {
                   Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -56,7 +50,7 @@ function Profile() {
             // dispatch(hideLoading());
             if(response.data.success) {
               toast.success(response.data.message);
-              navigate('/operators');
+              //navigate('/login');
             } else {
               toast.error(response.data.message);
             }
@@ -78,7 +72,7 @@ function Profile() {
           Name
         </Form.Label>
         <Col sm="10">
-          <Form.Control onChange={updateInput} name="name" type="text" placeholder="Enter name" />
+          <Form.Control onChange={updateInput} name="name" type="text" placeholder={operator?.name} />
         </Col>
       </Form.Group>
 
@@ -87,7 +81,7 @@ function Profile() {
           Email
         </Form.Label>
         <Col sm="10">
-          <Form.Control onChange={updateInput} name="email" type="text" placeholder="Enter email" />
+          <Form.Control onChange={updateInput} name="email" type="text" placeholder={operator?.email} />
         </Col>
       </Form.Group>
 
@@ -96,7 +90,7 @@ function Profile() {
           Phone Number
         </Form.Label>
         <Col sm="10">
-          <Form.Control onChange={updateInput} name="phoneNumber" type="number" placeholder="Enter phone number" />
+          <Form.Control onChange={updateInput} name="phoneNumber" type="number" placeholder={operator?.phoneNumber}  />
         </Col>
       </Form.Group>
 
@@ -107,10 +101,7 @@ function Profile() {
         <Col sm="10">
         <Form.Select aria-label="Default select example" name="role" onChange={updateInput}>
         <option disabled>Select Role</option>
-        <option value="salesman">Salesman</option>
-        <option value="senior">Senior</option>
-        <option value="store">Store</option>
-        <option value="admin">Admin</option>
+        <option value={operator?.role}>{operator?.role}</option>
       </Form.Select>
         </Col>
       </Form.Group>
@@ -120,11 +111,11 @@ function Profile() {
           Password
         </Form.Label>
         <Col sm="10">
-          <Form.Control onChange={updateInput} name="password" type="password" placeholder="Password" />
+          <Form.Control onChange={updateInput} name="password" type="password" placeholder="New Password" />
         </Col>
       </Form.Group>
 
-      <Button onClick={()=>console.log(state.user)} className="btn btn-primary btn-block">Update</Button>
+      <Button onClick={()=>updateProfile()} className="btn btn-primary btn-block">Save</Button>
     </Form>
     </Container>
     </>
