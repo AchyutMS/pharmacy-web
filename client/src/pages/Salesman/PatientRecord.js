@@ -63,7 +63,7 @@ function PatientRecord() {
         total += 0
       }
     })
-    setTotalAmount(Math.round(total));
+    setTotalAmount(total);
   }
 
   const handleQuantity = async(id,quantity) => {

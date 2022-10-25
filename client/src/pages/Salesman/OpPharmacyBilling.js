@@ -12,6 +12,23 @@ import toast from "react-hot-toast";
 import { setPatient } from '../../redux/patientSlice';
 import {PrintPrescription} from '../../components/PrintPrescription';
 
+class Print extends React.Component {
+  render() {
+    return (
+        <div>
+         <ReactToPrint 
+            trigger = {() => <Button variant='warning' size='sm'>Print</Button>}
+            content = {() => this.componentRef}
+          />
+            <div className='d-none'>
+              {console.log('inside print', this.props)}
+              <PrintPrescription ref={el => (this.componentRef = el)} details={this.props.detials}/>
+            </div>
+      </div>
+    );
+  }
+}
+
 function OpPharmacyBilling() {
     //const {patient} = useSelector((state) => state.patient);
     const dispatch = useDispatch();
@@ -19,6 +36,7 @@ function OpPharmacyBilling() {
     const [patientPhone, setPatientPhone] = useState('')
     
     const [patient,setPatient] = useState(null) 
+    const [print,setPrint] = useState([]) 
   
     const componentRef = useRef();
   
@@ -111,18 +129,15 @@ function OpPharmacyBilling() {
 
           {patient.records.prescriptions && patient.records.prescriptions.map((prescription,prescriptionId) => (
             <div >
-              <Card body className="mb-2">
+              <Card  body className="mb-2">
 
                 <div className="d-flex justify-content-between">
                   <div className="p-2">{prescription.patient.name}</div>
                   <div className="p-2">
-                    <div className="d-flex">
-                      <ReactToPrint 
-                        trigger = {() => <Button variant='warning' size='sm'>Print</Button>}
-                        content = {() => componentRef.current}
-                      />
-
-                        <Button variant="primary" size="sm" onClick={()=> navigate(`/patient-record/${prescriptionId}`)}>Edit</Button>
+                    <div className="d-flex" >
+                    
+                    <Print ref={componentRef} detials={prescription}/>
+                    <Button variant="primary" size="sm" onClick={()=> navigate(`/patient-record/${prescriptionId}`)}>Edit</Button>
 
                     </div>
                   </div>
@@ -133,9 +148,7 @@ function OpPharmacyBilling() {
             </div>
           ))}
 
-        <div className='d-none'>
-          <PrintPrescription ref={componentRef} />
-        </div>
+        
         </>
       }
       

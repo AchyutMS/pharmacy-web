@@ -102,7 +102,7 @@ function NewBill() {
         total += Math.round((item.MRP-item.discountAmount)*100)/100
       }
     })
-    setTotalAmount(Math.round(total));
+    setTotalAmount(total);
   }
 
   function handleRemove(id,item) {
