@@ -1,26 +1,36 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { Container, Row, Col, Form, Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 
 import Layout from '../components/Layout';
 
 // import { showLoading, hideLoading } from '../../redux/alertsSlice';
 
 function Profile() {
+  const { operator } = useSelector((state) => state.operator);
+
     const dispatch = useDispatch();
     const navigate = useNavigate();
     let [state, setState] = useState({
         user: {
-            name:'',
-            email:'',
-            phoneNumber:'',
+            name:operator.name,
+            email:operator.email,
+            phoneNumber:operator.phoneNumber,
             role: 'salesman',
-            password:'',
+            password:operator.password,
         }
     });
+
+    const getUserInfo = () => {
+      
+    }
+
+    useEffect(()=> {
+      getUserInfo();
+    },[]);
 
     let updateInput = (e) => {
         setState({
@@ -61,7 +71,7 @@ function Profile() {
     <>
     <Layout />
     <Container>
-      <h1 className='shadow-sm text-primary mt-5 p-3 text-center'>My Profile(do not touch ill take care)</h1>
+      <h1 className='shadow-sm text-primary mt-5 p-3 text-center'>My Profile</h1>
       <Form>
       <Form.Group as={Row} className="mb-3" controlId="formPlaintextName">
         <Form.Label column sm="2">
@@ -114,7 +124,7 @@ function Profile() {
         </Col>
       </Form.Group>
 
-      <Button onClick={register} className="btn btn-primary btn-block">Create Operator</Button>
+      <Button onClick={()=>console.log(state.user)} className="btn btn-primary btn-block">Update</Button>
     </Form>
     </Container>
     </>
