@@ -40,7 +40,7 @@ function Profile() {
         try{
           console.log(state.user)
             // dispatch(showLoading());
-            const response = await axios.post('/api/operator/update-operator-profile', {user: setState.user}, 
+            const response = await axios.post('/api/operator/update-operator-profile', {user: state.user}, 
               {
                 headers: {
                   Authorization: `Bearer ${localStorage.getItem("token")}`,

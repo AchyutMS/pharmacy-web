@@ -66,6 +66,30 @@ function PatientRecord() {
     setTotalAmount(total);
   }
 
+  const UpdateBill = async() => {
+    console.log('inside', prescription)
+    try {
+      const response = await axios.post(
+        "/api/salesman/update-bill",
+        {
+          prescription: prescription,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      if (response.data.success) {
+        console.log("response", response.data.data);
+      }
+      window.location.reload(true)
+    }
+    catch(err) {
+      console.log(err.message)
+    }
+  }
+
   const handleQuantity = async(id,quantity) => {
     console.log('handlequantity',quantity)
     const newState = prescription.map(obj => {
@@ -200,7 +224,7 @@ function PatientRecord() {
                   content = {() => componentRef.current}
                 /> */}
 
-                <Button variant="primary" size="sm" onClick={calculateTotalAmount}>
+                <Button variant="primary" size="sm" onClick={() => UpdateBill()}>
                   Generate Bill
                 </Button>
 
@@ -211,11 +235,6 @@ function PatientRecord() {
                     
         <h2 className="shadow-sm text-primary mt-5 p-3">Total Amount: Rs. {totalAmount}
         </h2>
-        
-        
-        {/* <div className='d-none'>
-          <PrintPrescription ref={componentRef} />
-        </div> */}
         
 
       </div>

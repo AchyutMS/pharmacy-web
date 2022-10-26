@@ -54,18 +54,30 @@ router.post("/get-operator-info-by-id", authMiddleware, async (req, res) => {
 
 router.post('/update-operator-profile', authMiddleware, async (req,res) => {
   try {
-      console.log(req.body.state)
-      // const operatorExist = await Operator.findOne({email: req.body.email});
-      // if(operatorExist) {
-      //     return res.status(200).send({message: "User already exists", success: false});
-      // }
-      // const password = req.body.password;
-      // const salt = await bcrypt.genSalt(10);
-      // const hashedPassword = await bcrypt.hash(password, salt);
-      // req.body.password = hashedPassword;
+      console.log('before updation',req.body)
+      const operatorOldInfo = await Operator.findOne({_id: req.body.operatorId});
+      console.log(operatorOldInfo)
 
-      // const newOperator = new Operator(req.body);
-      // await newOperator.save();
+      if(req.body.user.name){
+        operatorOldInfo.name = req.body.user.name;
+      } 
+
+      if(req.body.user.email){
+        operatorOldInfo.email = req.body.user.email ;
+      } 
+
+      if(req.body.user.phoneNumber){
+        operatorOldInfo.phoneNumber = req.body.user.phoneNumber;
+      } 
+
+      if(req.body.user.password) {  
+        const password = req.body.user.password;
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+        operatorOldInfo.password = hashedPassword;    
+      } 
+       
+      await operatorOldInfo.save();
       res.status(200).send({message:"User created successfully", success: true});
   } catch (error) {
       console.log(error);

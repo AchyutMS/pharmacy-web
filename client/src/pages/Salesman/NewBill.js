@@ -125,9 +125,7 @@ function NewBill() {
     prescription.map((item) => {
       if (item.required_quantity) {
         total +=
-          Math.round(
-            (item.MRP * item.required_quantity - item.discountAmount) * 100
-          ) / 100;
+          Math.round((item.MRP * item.required_quantity - item.discountAmount) * 100) / 100;
         console.log(typeof total, "printing type");
       } else {
         total += Math.round((item.MRP - item.discountAmount) * 100) / 100;
@@ -393,7 +391,7 @@ function NewBill() {
       </Form>
 
       <h2 className="shadow-sm text-primary mt-5 p-3">
-        Total Amount: Rs. {totalAmount}
+        Total Amount: Rs. {Math.round(totalAmount*100)/100}
       </h2>
 
       <BatchModal

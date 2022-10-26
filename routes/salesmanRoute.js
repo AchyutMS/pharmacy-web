@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 //Importing Models
+const itemBatchModel = require('../models/itemBatchModel')
 const Patient = require('../models/patientModel');
 //Importing Libraries
 const {v4: uuidv4} = require('uuid');
@@ -48,7 +49,43 @@ router.post('/generate-bill', authMiddleware, async (req, res) => {
         update_prescription.push({patient:sub_patient, billDetails:bill_details, prescription});
         await update_patient.save();
 
+        prescription.map(async(pres) => {
+            const batch = await itemBatchModel.findOne({BatchNo : pres.BatchNo})
+            batch.Quantity = parseInt(batch.Quantity) - pres.required_quantity
+            console.log(batch.Quantity)
+            await batch.save()
+
+            // itemBatchModel.members[index].name = new_name;
+            // batch.markModified('item batch');
+            // await batch.save();
+
+            // itemBatchModel.updateOne({BatchNo : pres.BatchNo}, { $set: {Quantity: parseInt(Quantity) - pres.required_quantity}})
+             
+        })
+
         res.status(200).send({ message: "Patient updated successfully", success: true, data: patient});
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({message: "Error generating bill", success: false, error});
+    }
+})
+
+
+router.post('/update-bill', authMiddleware, async (req, res) => {
+    console.log('in')
+    try {
+        const prescription = req.body.prescription
+
+        console.log('this is here',prescription)
+
+        prescription.map(async(pres) => {
+            const batch = await itemBatchModel.findOne({BatchNo : pres.BatchNo})
+            batch.Quantity = parseInt(batch.Quantity) + pres.returnQty
+            console.log(batch.Quantity)
+            await batch.save()
+        })
+
+        res.status(200).send({ message: "bill updated successfully", success: true});
     } catch (error) {
         console.log(error);
         res.status(500).send({message: "Error generating bill", success: false, error});
@@ -62,7 +99,7 @@ router.get('/get-prescription-detail/:userId/:prescriptionId', authMiddleware, a
 
         const patient = await Patient.findOne({_id: userId})
         const response = patient.records.prescriptions[prescriptionId]
-        console.log(response)
+        // console.log(response)
         res.status(200).send({ message: "Prescription details Fetched successfully", success: true, data: response});
     } catch (error) {
         console.log(error);
