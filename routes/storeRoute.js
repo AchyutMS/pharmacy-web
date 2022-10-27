@@ -92,4 +92,65 @@ router.post("/get-all-batch-from-itemId", authMiddleware, async (req, res) => {
   }
 });
 
+
+
+router.get("/get-all-items-quantity", authMiddleware, async (req, res) => {
+  try {
+    var itemBatch = await ItemBatch.find()
+
+    var itemBatch = itemBatch.sort(function(a, b) {
+      var c = parseInt(a.Quantity);
+      var d = parseInt(b.Quantity);
+      return c-d;
+  });
+
+ 
+    res.status(200).send({message:"Item Batch fetched successfully", success: true, itemBatch});
+  } catch (error) {
+    console.log(error);
+    res
+      .status(500)
+      .send({ message: "Error getting Item Batch", success: false, error });
+  }
+});
+
+router.get("/get-all-items-date", authMiddleware, async (req, res) => {
+  try {
+    var itemBatch = await ItemBatch.find()
+    // itemBatch.map(async(item) => {
+    //   var medDetail = await ItemMaster.findOne({id: item.id});
+    //   item.MedName = (medDetail !== null ? medDetail.name : "")
+    // })
+
+    var itemBatch = itemBatch.sort(function(a, b) {
+      var c = new Date(a.ExpiryDate);
+      var d = new Date(b.ExpiryDate);
+      return c-d;
+  });
+ 
+    res.status(200).send({message:"Item Batch fetched successfully", success: true, data:itemBatch});
+  } catch (error) {
+    console.log(error);
+    res
+      .status(500)
+      .send({ message: "Error getting Item Batch", success: false, error });
+  }
+});
+
+
+
+router.get("/get-all-items-master", authMiddleware, async (req, res) => {
+  try {
+    var itemMaster = await ItemMaster.find()
+
+    res.status(200).send({message:"Item Master fetched successfully", success: true, data : itemMaster});
+  } catch (error) {
+    console.log(error);
+    res
+      .status(500)
+      .send({ message: "Error getting Item Master", success: false, error });
+  }
+});
+
+
 module.exports = router;
