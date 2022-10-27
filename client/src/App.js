@@ -23,6 +23,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import { useSelector } from 'react-redux';
 import PatientRecord from "./pages/Salesman/PatientRecord";
 
+import AddItem from "./pages/Store/AddItem";
 
 function App() {
   const { loading } = useSelector((state) => state.alerts);
@@ -50,6 +51,8 @@ function App() {
         <Route path="/batch" element={<ProtectedRoute> <Batch /> </ProtectedRoute>} />
         <Route path="/patient-record/:id" element={<ProtectedRoute> <PatientRecord /> </ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute> <Profile /> </ProtectedRoute>} />
+
+        <Route path="/add-item" element={<ProtectedRoute> <AddItem /> </ProtectedRoute>} />
       </Routes>
     </BrowserRouter>
   );

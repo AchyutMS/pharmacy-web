@@ -3,6 +3,9 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 import Layout from '../components/Layout';
+
+import Tab from 'react-bootstrap/Tab';
+import Tabs from 'react-bootstrap/Tabs';
 import Table from 'react-bootstrap/Table';
 
 function Stock() {
@@ -39,38 +42,23 @@ function Stock() {
   return (
     <>
       <Layout />
-      <h1 className="shadow-sm text-primary mt-5 p-3">Batch</h1>
+      <h1 className="shadow-sm text-primary mt-5 p-3">Stock</h1>
 
-      <Table striped bordered hover>
-      <thead>
-        <tr>
-          {/* <th>ID</th> */}
-          <th>Batch No</th>
-          {/* <th>Parent</th>
-          <th>Modified Date</th>
-          <th>Blocked</th>
-          <th>Pers_catid</th> */}
-        </tr>
-      </thead>
-      <tbody>
+      <Tabs
+      defaultActiveKey="quantity"
+      id="uncontrolled-tab-example"
+      className="mb-3"
+    >
 
-        {
-          itemBatch && itemBatch.map((item) => {
-            return (
-            <tr key={item._id}>
-              <td>{item.BatchNo}</td>
-              {/* <td>{item.name}</td>
-              <td>{item.parent}</td>
-              <td>{item.ModifiedDate}</td>
-              <td>{item.blocked}</td>
-              <td>{item.pers_catid}</td> */}
-            </tr>
-            )
-          })
-        }
-      </tbody>
-      
-    </Table>
+      <Tab eventKey="quantity" title="Filter By Quantity">
+        Display the batch items that is low in stock
+      </Tab>
+
+      <Tab eventKey="expiry-date" title="Filter By Expiry Data">
+        Display the batch that are going to expire
+      </Tab>
+    </Tabs>
+
     </>
     
   )

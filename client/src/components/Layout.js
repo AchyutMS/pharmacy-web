@@ -39,12 +39,16 @@ function Layout() {
 
   const storeMenu = [
     {
-        name: 'store_menu1',
-        path: '/',
+      name: 'Stock',
+      path: '/stock'
     },
     {
-        name: 'store_menu2',
-        path: '/'
+      name: 'Store',
+      path: '/store'
+    },
+    {
+      name: 'Add Item',
+      path: '/add-item'
     }
 ];
     const salesmanMenu = [
