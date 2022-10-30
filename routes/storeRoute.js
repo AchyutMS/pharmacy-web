@@ -92,8 +92,6 @@ router.post("/get-all-batch-from-itemId", authMiddleware, async (req, res) => {
   }
 });
 
-
-
 router.get("/get-all-items-quantity", authMiddleware, async (req, res) => {
   try {
     var itemBatch = await ItemBatch.find()
@@ -137,8 +135,6 @@ router.get("/get-all-items-date", authMiddleware, async (req, res) => {
   }
 });
 
-
-
 router.get("/get-all-items-master", authMiddleware, async (req, res) => {
   try {
     var itemMaster = await ItemMaster.find()
@@ -149,6 +145,73 @@ router.get("/get-all-items-master", authMiddleware, async (req, res) => {
     res
       .status(500)
       .send({ message: "Error getting Item Master", success: false, error });
+  }
+});
+
+
+router.post("/get-item-details-from-id", authMiddleware, async (req, res) => {
+  console.log("ItemID",req.body.itemId)
+  try {
+    const item = await ItemMaster.findOne({id: req.body.itemId});
+    const batch= await ItemBatch.find({id: req.body.itemId});
+    const batchNo = batch.map((ele)=>{
+      return ele.BatchNo;
+    })
+    if(item){
+      res.status(200).send({message:"Item fetched successfully", success: true, data: [item,batchNo]});
+    } else {
+      res.status(200).send({message:"Item ID Not Found", success: false});
+    }
+    
+  } catch (error) {
+    console.log(error);
+    res
+      .status(500)
+      .send({ message: "Error getting Items from Category", success: false, error });
+  }
+});
+
+router.post("/save-item", authMiddleware, async (req, res) => {
+  try {
+    const itemDetails = req.body.itemDetails;
+    console.log(itemDetails);
+    const item = await ItemMaster.findOne({id: itemDetails.id});
+    if(item){
+      res.status(200).send({message:"Item already Present", success: false});
+    } else {
+      const newItem = new ItemMaster(itemDetails);
+      await newItem.save();
+      res.status(200).send({message:"Item Saved Successfully", success: true});
+    }
+    
+  } catch (error) {
+    console.log(error);
+    res
+      .status(500)
+      .send({ message: "Error getting Items from Category", success: false, error });
+  }
+});
+
+router.post("/save-batch", authMiddleware, async (req, res) => {
+  try {
+    const itemDetails = req.body.itemDetails;
+    const batchArray = req.body.batchArray;
+    const item = await ItemMaster.findOne({id: itemDetails.id});
+    if (item){
+      batchArray.map(async (batch)=>{
+      const newBatch = new ItemBatch(batch);
+      await newBatch.save();
+      })
+      res.status(200).send({message:"Batch saved successfully", success: true});      
+    } else {
+      res.status(200).send({message:"Item Not Found", success: false});
+    }
+    
+  } catch (error) {
+    console.log(error);
+    res
+      .status(500)
+      .send({ message: "Error getting Items from Category", success: false, error });
   }
 });
 

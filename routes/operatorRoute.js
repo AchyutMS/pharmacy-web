@@ -11,6 +11,7 @@ const authMiddleware = require('../middlewares/authMiddleware');
 router.post('/login', async (req,res) => {
     try {
         const operator = await Operator.findOne({email: req.body.email});
+        
         if(!operator) {
             return res.status(200).send({message:"Invalid email", success: false});
         }
@@ -18,7 +19,7 @@ router.post('/login', async (req,res) => {
         if(!isMatch) {
             return res.status(200).send({message:"Invalid password", success: false});
         } else {
-            const token = jwt.sign({id:operator._id}, process.env.JWT_SECRET_KEY, {
+            const token = jwt.sign({operator}, process.env.JWT_SECRET_KEY, {
                 expiresIn: "1d",
             });
             res.status(200).send({message:"Login successful", success: true, token: token});

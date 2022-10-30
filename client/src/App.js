@@ -1,6 +1,6 @@
 import "./App.css";
 
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 //Import Components
 import RegisterOperator from "./pages/Admin/RegisterOperator";
@@ -24,9 +24,19 @@ import { useSelector } from 'react-redux';
 import PatientRecord from "./pages/Salesman/PatientRecord";
 
 import AddItem from "./pages/Store/AddItem";
+import jwt from 'jwt-decode'
 
 function App() {
   const { loading } = useSelector((state) => state.alerts);
+
+  const token = localStorage.getItem("token")
+  var user
+  if(token) {
+    user = jwt(token)
+    console.log(user.operator)
+
+    console.log(user ? "true" : "false")
+  }
 
   return (
     <BrowserRouter>
@@ -37,8 +47,7 @@ function App() {
       )}
       <Toaster position="top-center" reverseOrder={false} />
       <Routes>
-        <Route path="/login" element={<PublicRoute> <Login /> </PublicRoute>} />
-        {/* <Route path="/register-operator" element={<RegisterOperator />} /> */}
+        {/* <Route path="/login" element={<PublicRoute> <Login /> </PublicRoute>} />
         <Route path="/register-operator" element={<ProtectedRoute> <RegisterOperator /> </ProtectedRoute>} />
         <Route path="/" element={<ProtectedRoute> <Home /> </ProtectedRoute>} />
         <Route path="/operators" element={<ProtectedRoute> <Operators /> </ProtectedRoute>} />
@@ -53,6 +62,115 @@ function App() {
         <Route path="/profile" element={<ProtectedRoute> <Profile /> </ProtectedRoute>} />
 
         <Route path="/add-item" element={<ProtectedRoute> <AddItem /> </ProtectedRoute>} />
+       */}
+
+{
+          user ?
+          user.operator.role === "salesman" ? 
+          <Route path='/register-operator' element={<RegisterOperator />} /> : 
+          <Route path='/register-operator' exact element={<Navigate replace to="/" />} /> : 
+          <Route path='/register-operator' exact element={<Navigate replace to="/login" />} />
+          }
+
+{
+          user ?
+          user.operator.role === "salesman" ? 
+          <Route path='/operators' element={<Operators />} /> : 
+          <Route path='/operators' exact element={<Navigate replace to="/" />} /> : 
+          <Route path='/operators' exact element={<Navigate replace to="/login" />} />
+          }
+
+{
+          user ?
+          user.operator.role === "salesman" ? 
+          <Route path='/op-pharmacy-billing' element={<OpPharmacyBilling />} /> : 
+          <Route path='/op-pharmacy-billing' exact element={<Navigate replace to="/" />} /> : 
+          <Route path='/op-pharmacy-billing' exact element={<Navigate replace to="/login" />} />
+          }
+
+{
+          user ?
+          user.operator.role === "salesman" ? 
+          <Route path='/register-patient' element={<RegisterPatient />} /> : 
+          <Route path='/register-patient' exact element={<Navigate replace to="/" />} /> : 
+          <Route path='/register-patient' exact element={<Navigate replace to="/login" />} />
+          }
+
+{
+          user ?
+          user.operator.role === "salesman" ? 
+          <Route path='/new-bill' element={<NewBill />} /> : 
+          <Route path='/new-bill' exact element={<Navigate replace to="/" />} /> : 
+          <Route path='/new-bill' exact element={<Navigate replace to="/login" />} />
+          }
+
+{
+          user ?
+          user.operator.role === "salesman" ? 
+          <Route path='/store' element={<Store />} /> : 
+          <Route path='/store' exact element={<Navigate replace to="/" />} /> : 
+          <Route path='/store' exact element={<Navigate replace to="/login" />} />
+          }
+
+{
+          user ?
+          user.operator.role === "salesman" ? 
+          <Route path='/category-medicines' element={<CategoryMedicines />} /> : 
+          <Route path='/category-medicines' exact element={<Navigate replace to="/" />} /> : 
+          <Route path='/category-medicines' exact element={<Navigate replace to="/login" />} />
+          }
+
+{
+          user ?
+          user.operator.role === "salesman" ? 
+          <Route path='/stock' element={<Stock />} /> : 
+          <Route path='/stock' exact element={<Navigate replace to="/" />} /> : 
+          <Route path='/stock' exact element={<Navigate replace to="/login" />} />
+          }
+
+{
+          user ?
+          user.operator.role === "salesman" ? 
+          <Route path='/batch' element={<Batch />} /> : 
+          <Route path='/batch' exact element={<Navigate replace to="/" />} /> : 
+          <Route path='/batch' exact element={<Navigate replace to="/login" />} />
+          }
+
+{
+          user ?
+          user.operator.role === "salesman" ? 
+          <Route path='/patient-record/:id' element={<PatientRecord />} /> : 
+          <Route path='/patient-record/:id' exact element={<Navigate replace to="/" />} /> : 
+          <Route path='/patient-record/:id' exact element={<Navigate replace to="/login" />} />
+          }
+
+{
+          user ?
+          user.operator.role === "salesman" ? 
+          <Route path='/profile' element={<Profile />} /> : 
+          <Route path='/profile' exact element={<Navigate replace to="/" />} /> : 
+          <Route path='/profile' exact element={<Navigate replace to="/login" />} />
+          }
+
+{
+          user ?
+          user.operator.role === "salesman" ? 
+          <Route path='/add-item' element={<AddItem />} /> : 
+          <Route path='/add-item' exact element={<Navigate replace to="/" />} /> : 
+          <Route path='/add-item' exact element={<Navigate replace to="/login" />} />
+          }
+
+          { user ?
+           <Route path='/' exact element={<Home />} />  : 
+           <Route path='/' exact element={<Login />} />
+
+          }
+
+        {user ? 
+            <Route path='/login' exact element={<Navigate replace to="/" />} /> : 
+            <Route path='/login' exact element={<Login />} />
+        }
+      
       </Routes>
     </BrowserRouter>
   );

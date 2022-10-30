@@ -25,6 +25,7 @@ const itemBatchSchema = new mongoose.Schema({
         },
         Quantity: {
             type: String,
+            required: true
         },
         CONTAIN: {
             type: String,

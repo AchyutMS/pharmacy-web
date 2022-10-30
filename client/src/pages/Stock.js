@@ -81,7 +81,7 @@ const MedName = (id) => {
   useEffect(() => {
     getAllItemBatchQty();
     getAllItemBatchDate();
-    getAllItemMaster()
+    getAllItemMaster();
   },[]);
 
 
