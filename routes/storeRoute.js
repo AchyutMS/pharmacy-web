@@ -5,6 +5,7 @@ const ItemGroup = require("../models/itemGroupModel");
 const ItemMaster = require("../models/itemMasterModel");
 const ItemBatch = require("../models/itemBatchModel");
 const station = require("../models/stationModel");
+const RequestItem = require("../models/requestItemModel");
 //Importing Libraries
 const mongoose = require("mongoose");
 const authMiddleware = require("../middlewares/authMiddleware");
@@ -214,6 +215,76 @@ router.post("/save-batch", authMiddleware, async (req, res) => {
       .send({ message: "Error getting Items from Category", success: false, error });
   }
 });
+
+router.post('/request-item',async (req,res) => {
+  const id = req.body.id
+  // console.log(item)
+  
+  try {
+    const item = await ItemMaster.findOne({id: id}).select(['-_id'])
+    
+    const reqItem = new RequestItem({
+      id: item.id,
+      name: item.name,
+      sellingprice : item.sellingprice,
+      startdatetime : item.startdatetime,
+      enddatetime : item.enddatetime,
+      name1 : item.name1,
+      strength : item.strength,
+      categoryid : item.categoryid,
+      manufacturerid : item.manufacturerid,
+      Deleted : item.Deleted,
+      manufacturercode : item.manufacturercode,
+      EUB : item.EUB,
+      profitcenter : item.profitcenter,
+      sunitid : item.sunitid,
+      tax : item.tax,
+      schedule : item.schedule,
+      mrpitem : item.mrpitem,
+      conversionqty : item.conversionqty,
+      drugtype : item.drugtype,
+      itemcode : item.itemcode,
+      itemcheckcomplete : item.itemcheckcomplete,
+      itemcheckincomplete : item.itemcheckincomplete,
+      deletedby : item.deletedby,
+      unitid : item.unitid,
+      type : item.type,
+      narcotics : item.narcotics,
+      cssditem : item.cssditem,
+      consignment : item.consignment,
+      approval : item.approval,
+      reusableitem : item.reusableitem,
+      reusablecount : item.reusablecount,
+      tempcatid : item.tempcatid,
+      modifieddate : item.modifieddate,
+      DiscountEligible : item.DiscountEligible,
+      OperatorId : item.OperatorId,
+      blocked : item.blocked,
+      Claiming : item.Claiming,
+      CommodityCode : item.CommodityCode,
+      PurchasePrice : item.PurchasePrice,
+      S_TAX : item.S_TAX,
+      hsncode : item.hsncode,
+      CGST : item.CGST,
+      SGST : item.SGST,
+      IGST : item.IGST,
+      specialisationid : item.specialisationid,
+      pers_itemid : item.pers_itemid,
+      pers_categoryid : item.pers_categoryid,
+      pers_manufacturerid : item.pers_manufacturerid,
+    })
+  
+    await reqItem.save()
+
+    res
+    .status(200)
+    .send({ message: "Requested Successfully", success: true });
+  } catch (err) {
+    res
+    .status(500)
+    .send({ message: "Request Failed", success: false, err });
+  }
+})
 
 
 module.exports = router;

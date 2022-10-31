@@ -22,7 +22,8 @@ const operatorSchema = new mongoose.Schema(
         role: {
             type: String,
             default: "salesman",
-        }
+        },
+        
     },
     {
         timestamps: true,

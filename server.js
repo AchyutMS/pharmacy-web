@@ -7,6 +7,7 @@ const adminRoute = require('./routes/adminRoute');
 const operatorRoute = require('./routes/operatorRoute');
 const salesmanRoute = require('./routes/salesmanRoute');
 const storeRoute = require('./routes/storeRoute');
+const seniorRoute = require('./routes/seniorRoute');
 
 //Middlewares
 app.use(express.json());
@@ -14,6 +15,7 @@ app.use('/api/admin', adminRoute);
 app.use("/api/operator", operatorRoute);
 app.use("/api/salesman", salesmanRoute);
 app.use("/api/store", storeRoute);
+app.use("/api/senior", seniorRoute);
 
 //API Endpoints
 const port = process.env.PORT || 5000;

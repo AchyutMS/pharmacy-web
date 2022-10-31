@@ -16,6 +16,7 @@ import CategoryMedicines from "./pages/CategoryMedicines";
 import Stock from './pages/Stock';
 import Batch from './pages/Batch';
 import Profile from './pages/Profile';
+import ItemRequest from './pages/Senior/ItemRequest';
 
 import PublicRoute from "./components/PublicRoute";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -151,6 +152,14 @@ function App() {
           <Route path='/add-item' exact element={<Navigate replace to="/login" />} />
           }
 
+{
+          user ?
+          user.operator.role === "senior" ? 
+          <Route path='/check-request' element={<ItemRequest />} /> : 
+          <Route path='/check-request' exact element={<Navigate replace to="/" />} /> : 
+          <Route path='/check-request' exact element={<Navigate replace to="/login" />} />
+          }
+
           { user ?
            <Route path='/' exact element={<Home />} />  : 
            <Route path='/' exact element={<Navigate replace to="/login" />} />
@@ -162,6 +171,7 @@ function App() {
             <Route path='/login' exact element={<Login />} />
         }
       
+
       </Routes>
     </BrowserRouter>
   );

@@ -1,18 +1,30 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-
+import jwt from 'jwt-decode'
 import Layout from '../components/Layout';
 
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import Table from 'react-bootstrap/Table';
+import { Button } from 'react-bootstrap';
 
 function Stock() {
   const [ itemMaster, setItemMaster] = useState([]);
   const [ itemBatchQty, setItemBatchQty] = useState([]);
   const [ itemBatchDate, setItemBatchDate] = useState([]);
   const navigate = useNavigate();
+
+
+  const token = localStorage.getItem("token")
+  var user
+
+  if(token) {
+    user = jwt(token)
+    console.log(user.operator)
+
+    console.log(user)
+  }
 
   const getAllItemBatchQty = async () => {
     try {
@@ -77,6 +89,16 @@ const MedName = (id) => {
   })
   return name
 }
+
+const RequestItem =async (id) => {
+  await axios.post('/api/store/request-item', {id})
+  .then((res) => {
+    console.log(res.data.message)
+  })
+  .catch(err => {
+    console.log(err.message)
+  })
+}
   
   useEffect(() => {
     getAllItemBatchQty();
@@ -104,6 +126,9 @@ const MedName = (id) => {
                   <th>Item Batch</th>
                   <th>Expiry Date</th>
                   <th>Qty</th>
+                  {
+                    user.operator.role == "store" ? <th>Action</th> : null
+                  }
                 </tr>
               </thead>
               <tbody>
@@ -114,6 +139,9 @@ const MedName = (id) => {
                           <td>{item.BatchNo}</td>  
                           <td>{item.ExpiryDate.split(" ")[0].split('-').reverse().join('-')}</td>  
                           <td>{item.Quantity}</td>  
+                          {
+                            user.operator.role == "store" ? <td><Button onClick={() => RequestItem(item.id)}>Request</Button></td> : null
+                          }
                         </tr>  
                       )
                     })}
@@ -130,6 +158,9 @@ const MedName = (id) => {
                   <th>Item Name</th>
                   <th>Expiry Date</th>
                   <th>Qty</th>
+                  {
+                    user.operator.role == "store" ? <th>Action</th> : null
+                  }
                 </tr>
               </thead>
               <tbody>
@@ -140,6 +171,9 @@ const MedName = (id) => {
                           <td>{item.BatchNo}</td>  
                           <td>{item.ExpiryDate.split(" ")[0].split('-').reverse().join('-')}</td>  
                           <td>{item.Quantity}</td>  
+                          {
+                            user.operator.role == "store" ? <td><Button onClick={() => RequestItem(item.id)}>Request</Button></td> : null
+                          }
                         </tr>  
                       )
                     })}

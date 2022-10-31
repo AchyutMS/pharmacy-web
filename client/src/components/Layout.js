@@ -39,8 +39,8 @@ function Layout() {
 
     const seniorMenu = [
       {
-          name: 'senior_menu1',
-          path: '/',
+          name: 'Check Request',
+          path: '/check-request',
       },
       {
           name: 'senior_menu2',
