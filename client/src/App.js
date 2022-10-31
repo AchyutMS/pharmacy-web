@@ -31,11 +31,12 @@ function App() {
 
   const token = localStorage.getItem("token")
   var user
+
   if(token) {
     user = jwt(token)
     console.log(user.operator)
 
-    console.log(user ? "true" : "false")
+    console.log(user)
   }
 
   return (
@@ -66,7 +67,7 @@ function App() {
 
 {
           user ?
-          user.operator.role === "salesman" ? 
+          user.operator.role === "admin" ? 
           <Route path='/register-operator' element={<RegisterOperator />} /> : 
           <Route path='/register-operator' exact element={<Navigate replace to="/" />} /> : 
           <Route path='/register-operator' exact element={<Navigate replace to="/login" />} />
@@ -74,7 +75,7 @@ function App() {
 
 {
           user ?
-          user.operator.role === "salesman" ? 
+          user.operator.role === "admin" ? 
           <Route path='/operators' element={<Operators />} /> : 
           <Route path='/operators' exact element={<Navigate replace to="/" />} /> : 
           <Route path='/operators' exact element={<Navigate replace to="/login" />} />
@@ -106,33 +107,25 @@ function App() {
 
 {
           user ?
-          user.operator.role === "salesman" ? 
           <Route path='/store' element={<Store />} /> : 
-          <Route path='/store' exact element={<Navigate replace to="/" />} /> : 
           <Route path='/store' exact element={<Navigate replace to="/login" />} />
           }
 
 {
           user ?
-          user.operator.role === "salesman" ? 
           <Route path='/category-medicines' element={<CategoryMedicines />} /> : 
-          <Route path='/category-medicines' exact element={<Navigate replace to="/" />} /> : 
           <Route path='/category-medicines' exact element={<Navigate replace to="/login" />} />
           }
 
 {
           user ?
-          user.operator.role === "salesman" ? 
           <Route path='/stock' element={<Stock />} /> : 
-          <Route path='/stock' exact element={<Navigate replace to="/" />} /> : 
           <Route path='/stock' exact element={<Navigate replace to="/login" />} />
           }
 
 {
           user ?
-          user.operator.role === "salesman" ? 
           <Route path='/batch' element={<Batch />} /> : 
-          <Route path='/batch' exact element={<Navigate replace to="/" />} /> : 
           <Route path='/batch' exact element={<Navigate replace to="/login" />} />
           }
 
@@ -146,15 +139,13 @@ function App() {
 
 {
           user ?
-          user.operator.role === "salesman" ? 
           <Route path='/profile' element={<Profile />} /> : 
-          <Route path='/profile' exact element={<Navigate replace to="/" />} /> : 
           <Route path='/profile' exact element={<Navigate replace to="/login" />} />
           }
 
 {
           user ?
-          user.operator.role === "salesman" ? 
+          user.operator.role === "store" ? 
           <Route path='/add-item' element={<AddItem />} /> : 
           <Route path='/add-item' exact element={<Navigate replace to="/" />} /> : 
           <Route path='/add-item' exact element={<Navigate replace to="/login" />} />
@@ -162,7 +153,7 @@ function App() {
 
           { user ?
            <Route path='/' exact element={<Home />} />  : 
-           <Route path='/' exact element={<Login />} />
+           <Route path='/' exact element={<Navigate replace to="/login" />} />
 
           }
 

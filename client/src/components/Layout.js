@@ -2,17 +2,28 @@ import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
+import jwt from 'jwt-decode'
 
 import { useNavigate } from 'react-router-dom'; 
 import { useSelector } from 'react-redux';
 import logo from '../sims-Logo-new.png';
 
 function Layout() {
-    const {operator} = useSelector((state) => state.operator);
+    // const {operator} = useSelector((state) => state.operator);
+    const token = localStorage.getItem('token')
+    var operator
+
+    if(token) {
+      operator = jwt(token).operator
+      console.log(operator,'')
+    }
+
     const navigate = useNavigate();
     const logout = () => {
         localStorage.removeItem('token');
-        navigate('/login');
+        console.log('logged out')
+        window.location.reload()
+
     }
 
     const adminMenu = [
