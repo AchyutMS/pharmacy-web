@@ -1,29 +1,31 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import jwt from 'jwt-decode'
+import jwt from 'jwt-decode';
+import toast from "react-hot-toast";
 import Layout from '../components/Layout';
 
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import Table from 'react-bootstrap/Table';
 import { Button } from 'react-bootstrap';
+import Container from 'react-bootstrap/Container';
 
 function Stock() {
   const [ itemMaster, setItemMaster] = useState([]);
   const [ itemBatchQty, setItemBatchQty] = useState([]);
   const [ itemBatchDate, setItemBatchDate] = useState([]);
+  const [ requestedItems, setRequestedItems] = useState([]);
   const navigate = useNavigate();
 
 
   const token = localStorage.getItem("token")
-  var user
+  var user;
+  var operator;
 
   if(token) {
     user = jwt(token)
-    console.log(user.operator)
-
-    console.log(user)
+    operator = user.operator;
   }
 
   const getAllItemBatchQty = async () => {
@@ -72,18 +74,26 @@ function Stock() {
     }
   }
   
-//   const handleCategoryMedicine = (itemId) => {
-//     sessionStorage.setItem('category', itemId);
-//     // navigate('/category-medicines',{state:{id:itemId}});
-//     navigate('/category-medicines');
-//   }
+  const getAllRequestedItems = async() => {
+    try {
+      const response = await axios.get("/api/store/get-all-requested-items", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`
+        },
+      });
+      if (response.data.success) {
+        setRequestedItems(response.data.data);
+        console.log(response.data.data)
+      }
+    } catch (err) {
+      console.log(err.message)
+    }
+  }
 
 const MedName = (id) => {
-  console.log(id,'id here')
   let name = ""
   itemMaster.map(item => {
     if (item.id == id){
-      console.log(item.name, id)
        name = item.name
     }
   })
@@ -93,10 +103,11 @@ const MedName = (id) => {
 const RequestItem =async (id) => {
   await axios.post('/api/store/request-item', {id})
   .then((res) => {
-    console.log(res.data.message)
+    toast.success(res.data.message)
+    window.location.reload(true)
   })
   .catch(err => {
-    console.log(err.message)
+    toast.error("Error Requesting")
   })
 }
   
@@ -104,13 +115,24 @@ const RequestItem =async (id) => {
     getAllItemBatchQty();
     getAllItemBatchDate();
     getAllItemMaster();
+    getAllRequestedItems();
   },[]);
 
+  const color =
+  operator && operator.role === "admin"
+    ? "danger"
+    : operator && operator.role === "senior"
+    ? "secondary"
+    : operator && operator.role === "store"
+    ? "success"
+    : "primary";
 
+console.log(requestedItems)
   return (
     <>
       <Layout />
-      <h1 className="shadow-sm text-primary mt-5 p-3">Stock</h1>
+      <Container>
+      <h1 className={`shadow-sm text-${color} mt-5 p-3`}>Stock</h1>
 
       <Tabs
       defaultActiveKey="quantity"
@@ -140,7 +162,11 @@ const RequestItem =async (id) => {
                           <td>{item.ExpiryDate.split(" ")[0].split('-').reverse().join('-')}</td>  
                           <td>{item.Quantity}</td>  
                           {
-                            user.operator.role == "store" ? <td><Button onClick={() => RequestItem(item.id)}>Request</Button></td> : null
+                            requestedItems.includes(item.id) 
+                            ?                       
+                            user.operator.role == "store" ? <td><Button variant="success">Requested</Button></td> : null
+                            :
+                            user.operator.role == "store" ? <td><Button variant="warning" onClick={() => RequestItem(item.id)}>Request</Button></td> : null
                           }
                         </tr>  
                       )
@@ -172,7 +198,11 @@ const RequestItem =async (id) => {
                           <td>{item.ExpiryDate.split(" ")[0].split('-').reverse().join('-')}</td>  
                           <td>{item.Quantity}</td>  
                           {
-                            user.operator.role == "store" ? <td><Button onClick={() => RequestItem(item.id)}>Request</Button></td> : null
+                            requestedItems.includes(item.id) 
+                            ?                       
+                            user.operator.role == "store" ? <td><Button variant="success">Requested</Button></td> : null
+                            :
+                            user.operator.role == "store" ? <td><Button variant="warning" onClick={() => RequestItem(item.id)}>Request</Button></td> : null
                           }
                         </tr>  
                       )
@@ -181,7 +211,7 @@ const RequestItem =async (id) => {
             </Table>
       </Tab>
     </Tabs>
-
+    </Container>
     </>
     
   )

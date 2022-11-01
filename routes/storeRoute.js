@@ -84,12 +84,12 @@ router.post("/get-all-batch-from-itemId", authMiddleware, async (req, res) => {
       var d = new Date(b.ExpiryDate);
       return c-d;
   });
-    res.status(200).send({message:"Batched from Items fetched successfully", success: true, data: [item.name, itemBatch]});
+    res.status(200).send({message:"Batches from Item fetched successfully", success: true, data: [item.name, itemBatch]});
   } catch (error) {
     console.log(error);
     res
       .status(500)
-      .send({ message: "Error getting Items from Category", success: false, error });
+      .send({ message: "Error getting Batches from Item", success: false, error });
   }
 });
 
@@ -104,12 +104,12 @@ router.get("/get-all-items-quantity", authMiddleware, async (req, res) => {
   });
 
  
-    res.status(200).send({message:"Item Batch fetched successfully", success: true, itemBatch});
+    res.status(200).send({message:"Item Quantity Fetched successfully", success: true, itemBatch});
   } catch (error) {
     console.log(error);
     res
       .status(500)
-      .send({ message: "Error getting Item Batch", success: false, error });
+      .send({ message: "Error getting Item Quantity", success: false, error });
   }
 });
 
@@ -127,12 +127,12 @@ router.get("/get-all-items-date", authMiddleware, async (req, res) => {
       return c-d;
   });
  
-    res.status(200).send({message:"Item Batch fetched successfully", success: true, data:itemBatch});
+    res.status(200).send({message:"Item Dates fetched successfully", success: true, data:itemBatch});
   } catch (error) {
     console.log(error);
     res
       .status(500)
-      .send({ message: "Error getting Item Batch", success: false, error });
+      .send({ message: "Error getting Item Dates", success: false, error });
   }
 });
 
@@ -212,17 +212,17 @@ router.post("/save-batch", authMiddleware, async (req, res) => {
     console.log(error);
     res
       .status(500)
-      .send({ message: "Error getting Items from Category", success: false, error });
+      .send({ message: "Error while saving Batch", success: false, error });
   }
 });
 
 router.post('/request-item',async (req,res) => {
   const id = req.body.id
-  // console.log(item)
-  
   try {
     const item = await ItemMaster.findOne({id: id}).select(['-_id'])
-    
+    reqItemExist = await RequestItem.findOne({id: id});
+
+    if(!reqItemExist) {
     const reqItem = new RequestItem({
       id: item.id,
       name: item.name,
@@ -279,6 +279,11 @@ router.post('/request-item',async (req,res) => {
     res
     .status(200)
     .send({ message: "Requested Successfully", success: true });
+    } else {
+      res
+    .status(200)
+    .send({ message: "Item Already Requested", success: true });
+    }
   } catch (err) {
     res
     .status(500)
@@ -286,5 +291,17 @@ router.post('/request-item',async (req,res) => {
   }
 })
 
+router.get("/get-all-requested-items", authMiddleware, async (req, res) => {
+  try {
+    var requestedItems = await RequestItem.find()
+    requestedItems = requestedItems.map(item=> item.id)
+    res.status(200).send({message:"Requested Items fetched successfully", success: true, data : requestedItems});
+  } catch (error) {
+    console.log(error);
+    res
+      .status(500)
+      .send({ message: "Error getting Requested Items", success: false, error });
+  }
+});
 
 module.exports = router;

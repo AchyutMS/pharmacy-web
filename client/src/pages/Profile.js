@@ -1,19 +1,28 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { Container, Row, Col, Form, Button } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-
+import jwt from "jwt-decode";
 import Layout from '../components/Layout';
-import { showLoading, hideLoading } from '../redux/alertsSlice';
+
 
 
 function Profile() {
-  const { operator } = useSelector((state) => state.operator);
-    const dispatch = useDispatch();
-    const navigate = useNavigate();
+  const token = localStorage.getItem("token");
+  var operator;
 
+  if (token) {
+    operator = jwt(token).operator;
+  }
+
+  const color =
+  operator && operator.role === "admin"
+    ? "danger"
+    : operator && operator.role === "senior"
+    ? "secondary"
+    : operator && operator.role === "store"
+    ? "success"
+    : "primary";
 
     let [state, setState] = useState({
         user: {
@@ -39,7 +48,6 @@ function Profile() {
     let updateProfile = async () => {
         try{
           console.log(state.user)
-            // dispatch(showLoading());
             const response = await axios.post('/api/operator/update-operator-profile', {user: state.user}, 
               {
                 headers: {
@@ -47,15 +55,12 @@ function Profile() {
                 },
               }
             );
-            // dispatch(hideLoading());
             if(response.data.success) {
               toast.success(response.data.message);
-              //navigate('/login');
             } else {
               toast.error(response.data.message);
             }
         } catch(error) {
-            // dispatch(hideLoading());
             console.log(error);
             toast.error('Something went wrong');
         }
@@ -65,7 +70,7 @@ function Profile() {
     <>
     <Layout />
     <Container>
-      <h1 className='shadow-sm text-primary mt-5 p-3 text-center'>My Profile</h1>
+      <h1 className={`shadow-sm text-${color} mt-5 p-3 text-center`}>My Profile</h1>
       <Form>
       <Form.Group as={Row} className="mb-3" controlId="formPlaintextName">
         <Form.Label column sm="2">
@@ -115,7 +120,7 @@ function Profile() {
         </Col>
       </Form.Group>
 
-      <Button onClick={()=>updateProfile()} className="btn btn-primary btn-block">Save</Button>
+      <Button onClick={()=>updateProfile()} className={`btn btn-${color} btn-block`}>Save</Button>
     </Form>
     </Container>
     </>

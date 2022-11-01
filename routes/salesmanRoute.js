@@ -63,7 +63,7 @@ router.post('/generate-bill', authMiddleware, async (req, res) => {
              
         })
 
-        res.status(200).send({ message: "Patient updated successfully", success: true, data: patient});
+        res.status(200).send({ message: "Bill Generated successfully", success: true, data: patient});
     } catch (error) {
         console.log(error);
         res.status(500).send({message: "Error generating bill", success: false, error});
@@ -75,9 +75,6 @@ router.post('/update-bill', authMiddleware, async (req, res) => {
     console.log('in')
     try {
         const prescription = req.body.prescription
-
-        console.log('this is here',prescription)
-
         prescription.map(async(pres) => {
             const batch = await itemBatchModel.findOne({BatchNo : pres.BatchNo})
             batch.Quantity = parseInt(batch.Quantity) + pres.returnQty
@@ -85,10 +82,10 @@ router.post('/update-bill', authMiddleware, async (req, res) => {
             await batch.save()
         })
 
-        res.status(200).send({ message: "bill updated successfully", success: true});
+        res.status(200).send({ message: "Bill updated successfully", success: true});
     } catch (error) {
         console.log(error);
-        res.status(500).send({message: "Error generating bill", success: false, error});
+        res.status(500).send({message: "Error Updating bill", success: false, error});
     }
 })
 

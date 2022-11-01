@@ -225,7 +225,7 @@ function PatientRecord() {
                 /> */}
 
                 <Button variant="primary" size="sm" onClick={() => UpdateBill()}>
-                  Generate Bill
+                  Update Bill
                 </Button>
 
               </div>

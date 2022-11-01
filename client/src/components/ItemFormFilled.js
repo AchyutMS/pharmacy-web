@@ -219,7 +219,7 @@ function ItemFormFilled({updateInput, item}) {
                 name="SGST"
                 type="text"
                 placeholder="Enter SGST"
-                value={item.SCGST}
+                value={item.SGST}
               />
             </Col>
 

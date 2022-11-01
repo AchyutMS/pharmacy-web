@@ -79,10 +79,10 @@ router.post('/update-operator-profile', authMiddleware, async (req,res) => {
       } 
        
       await operatorOldInfo.save();
-      res.status(200).send({message:"User created successfully", success: true});
+      res.status(200).send({message:"User updated successfully", success: true});
   } catch (error) {
       console.log(error);
-      res.status(500).send({message:"Error creating user", success: false, error});
+      res.status(500).send({message:"Error updating user", success: false, error});
   }
 })
 

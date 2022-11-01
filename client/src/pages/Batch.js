@@ -1,13 +1,19 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react';
+import jwt from "jwt-decode";
 import Layout from '../components/Layout';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import Table from 'react-bootstrap/Table';
 import { useNavigate } from 'react-router-dom';
+import Container from 'react-bootstrap/Container';
 
 function Batch() {
-    //const location = useLocation();
-    //const categoryId = location.state.id;
+  const token = localStorage.getItem("token");
+  var operator;
+
+  if (token) {
+    operator = jwt(token).operator;
+  }
     const navigate = useNavigate();
     const itemId = sessionStorage.getItem('batch');
     const [ itemName, setItemName ] = useState('');
@@ -37,12 +43,20 @@ function Batch() {
     },[]);
 
     console.log(itemName,batchItems);
+    const color =
+    operator && operator.role === "admin"
+      ? "danger"
+      : operator && operator.role === "senior"
+      ? "secondary"
+      : operator && operator.role === "store"
+      ? "success"
+      : "primary";
 
   return (
     <>
         <Layout />
-        <h1 className="shadow-sm text-primary mt-5 p-3">{itemName && itemName}</h1>
-        <p><b>(These Columns are temporary, it has to be changed after asking sir)</b></p>
+        <Container>
+        <h1 className={`shadow-sm text-${color} mt-5 p-3`}>{itemName && itemName}</h1>
 
         <Table striped bordered hover>
       <thead>
@@ -70,9 +84,9 @@ function Batch() {
       </tbody>
       
     </Table>
-
+    </Container>
     </>
   )
 }
 
-export default Batch
+export default Batch;

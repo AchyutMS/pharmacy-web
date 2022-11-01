@@ -4,6 +4,7 @@ import ReactToPrint from "react-to-print";
 import { useSelector, useDispatch } from "react-redux";
 import { Row, Col, Form, Button } from "react-bootstrap";
 import { useNavigate,Navigate } from "react-router-dom";
+import Container from 'react-bootstrap/Container';
 import Card from 'react-bootstrap/Card';
 
 import Layout from "../../components/Layout";
@@ -78,7 +79,7 @@ function OpPharmacyBilling() {
   return (
     <>
       <Layout />
-
+      <Container>
       <h1 className="shadow-sm text-primary mt-5 p-3">OP Pharmacy Billing</h1>
 
       <div className="m-3 d-flex justify-content-end">
@@ -156,7 +157,7 @@ function OpPharmacyBilling() {
         </>
       }
       
-
+      </Container>
     </>
   );
 }

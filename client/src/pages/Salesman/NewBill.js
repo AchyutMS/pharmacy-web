@@ -3,7 +3,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 
 import { useSelector, useDispatch } from "react-redux";
-import { Row, Col, Form, Button } from "react-bootstrap";
+import { Row, Col, Form, Button, Container } from "react-bootstrap";
 import Table from "react-bootstrap/Table";
 import Card from "react-bootstrap/Card";
 
@@ -190,8 +190,8 @@ function NewBill() {
   return (
     <>
       <Layout />
+      <Container>
       <h1 className="shadow-sm text-primary mt-5 p-3">New Bill</h1>
-
       <Form>
         <Form.Group as={Row} className="mb-3" controlId="formPlaintextName">
           <Col sm="3">
@@ -400,6 +400,7 @@ function NewBill() {
         item={selectedItem}
         addPrescription={addPrescription}
       />
+      </Container>
     </>
   );
 }

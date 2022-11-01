@@ -227,7 +227,7 @@ function AddItem() {
     <>
       <Layout />
 
-      <h2 className="shadow-sm text-primary mt-5 p-3">Add New Item</h2>
+      <h2 className="shadow-sm text-success mt-5 p-3">Add New Item</h2>
       <Container fluid>
         
         <Form>
@@ -247,7 +247,7 @@ function AddItem() {
 
             <Col sm="1">
               <Button
-                variant="primary"
+                variant="success"
                 size="md"
                 type="submit"
                 onClick={(e)=> loadItem(e)}
@@ -258,7 +258,7 @@ function AddItem() {
 
             <Col sm="2">
               <Button
-                variant="primary"
+                variant="success"
                 size="md"
                 onClick={()=> saveItem()}
               >
@@ -274,7 +274,7 @@ function AddItem() {
         
       </Container>
 
-      <h2 className="shadow-sm text-primary mt-5 p-3">Create Batch</h2>
+      <h2 className="shadow-sm text-success mt-5 p-3">Create Batch</h2>
 
       <Container fluid>
         <Form>
@@ -338,7 +338,7 @@ function AddItem() {
             <Col sm="1">
               <Button
                 type="reset"
-                variant="primary"
+                variant="success"
                 size="sm"
                 onClick={() => {
                     if(itemDetails==null){
@@ -391,7 +391,7 @@ function AddItem() {
                     <td>{item.Quantity}</td>
                     <td>
                           <Button
-                            variant="primary"
+                            variant="danger"
                             size="sm"
                             onClick={() => handleRemove(item.BatchNo)}
                           >
@@ -404,7 +404,7 @@ function AddItem() {
           </tbody>
         </Table>
 
-         <Button onClick={()=> saveBatch()} className="btn btn-primary btn-block">Save Batch</Button>
+         <Button onClick={()=> saveBatch()} className="btn btn-success btn-block">Save Batch</Button>
       </Container>
     </>
   );
