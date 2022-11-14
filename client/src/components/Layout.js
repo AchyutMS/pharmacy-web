@@ -61,6 +61,10 @@ function Layout() {
       name: "Add Item",
       path: "/add-item",
     },
+    {
+      name: "Purchase Order",
+      path: "/purchase-order",
+    },
   ];
   const salesmanMenu = [
     {

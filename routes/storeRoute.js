@@ -6,6 +6,7 @@ const ItemMaster = require("../models/itemMasterModel");
 const ItemBatch = require("../models/itemBatchModel");
 const station = require("../models/stationModel");
 const RequestItem = require("../models/requestItemModel");
+const Supplier = require("../models/supplierModel");
 //Importing Libraries
 const mongoose = require("mongoose");
 const authMiddleware = require("../middlewares/authMiddleware");
@@ -301,6 +302,24 @@ router.get("/get-all-requested-items", authMiddleware, async (req, res) => {
     res
       .status(500)
       .send({ message: "Error getting Requested Items", success: false, error });
+  }
+});
+
+router.post("/get-supplier-details-from-id", authMiddleware, async (req, res) => {
+  try {
+    console.log(req.body.supplierId)
+    const supplier = await Supplier.findOne({_id: req.body.supplierId});
+    if(supplier){
+      res.status(200).send({message:"Supplier Details fetched successfully", success: true, data: supplier});
+    } else {
+      res.status(200).send({message:"Supplier Details Not Found", success: false});
+    }
+    
+  } catch (error) {
+    console.log(error);
+    res
+      .status(500)
+      .send({ message: "Error getting Supplier Details", success: false, error });
   }
 });
 

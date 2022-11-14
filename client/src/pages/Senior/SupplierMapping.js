@@ -14,7 +14,7 @@ function SupplierMapping() {
   const { supplier } = state || {};
   
   const navigate = useNavigate();
-  const supplierId = sessionStorage.getItem("supplier");
+  // const supplierId = sessionStorage.getItem("supplier");
   const [itemMaster, setItemMaster] = useState([]);
   const [search, setSearch] = useState("");
   const [MapItem, setMapItem] = useState(supplier.items);

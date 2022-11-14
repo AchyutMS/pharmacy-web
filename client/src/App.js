@@ -23,6 +23,9 @@ import PatientRecord from "./pages/Salesman/PatientRecord";
 import AddItem from "./pages/Store/AddItem";
 import CreateSupplier from "./pages/Senior/CreateSupplier";
 import SupplierMapping from "./pages/Senior/SupplierMapping";
+import PurchaseOrder from "./pages/Store/PurchaseOrder";
+import NewPurchaseOrder from "./pages/Store/NewPurchaseOrder";
+
 
 function App() {
   const { loading } = useSelector((state) => state.alerts);
@@ -217,6 +220,42 @@ function App() {
         ) : (
           <Route
             path="/add-item"
+            exact
+            element={<Navigate replace to="/login" />}
+          />
+        )}
+
+        {user ? (
+          user.operator.role === "store" ? (
+            <Route path="/purchase-order" element={<PurchaseOrder />} />
+          ) : (
+            <Route
+              path="/purchase-order"
+              exact
+              element={<Navigate replace to="/" />}
+            />
+          )
+        ) : (
+          <Route
+            path="/purchase-order"
+            exact
+            element={<Navigate replace to="/login" />}
+          />
+        )}
+
+        {user ? (
+          user.operator.role === "store" ? (
+            <Route path="/new-purchase-order" element={<NewPurchaseOrder />} />
+          ) : (
+            <Route
+              path="/new-purchase-order"
+              exact
+              element={<Navigate replace to="/" />}
+            />
+          )
+        ) : (
+          <Route
+            path="/new-purchase-order"
             exact
             element={<Navigate replace to="/login" />}
           />
