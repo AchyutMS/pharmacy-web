@@ -21,6 +21,8 @@ import Profile from "./pages/Profile";
 import ItemRequest from "./pages/Senior/ItemRequest";
 import PatientRecord from "./pages/Salesman/PatientRecord";
 import AddItem from "./pages/Store/AddItem";
+import CreateSupplier from "./pages/Senior/CreateSupplier";
+import SupplierMapping from "./pages/Senior/SupplierMapping";
 
 function App() {
   const { loading } = useSelector((state) => state.alerts);
@@ -239,6 +241,45 @@ function App() {
         )}
 
         {user ? (
+          user.operator.role === "senior" ? (
+            <Route path="/supplier" element={<CreateSupplier />} />
+          ) : (
+            <Route
+              path="/supplier"
+              exact
+              element={<Navigate replace to="/" />}
+            />
+          )
+        ) : (
+          <Route
+            path="/supplier"
+            exact
+            element={<Navigate replace to="/login" />}
+          />
+        )}
+
+        
+        {user ? (
+          user.operator.role === "senior" ? (
+            <Route path="/supplier-mapping" element={<SupplierMapping />} />
+          ) : (
+            <Route
+              path="/supplier-mapping"
+              exact
+              element={<Navigate replace to="/" />}
+            />
+          )
+        ) : (
+          <Route
+            path="/supplier"
+            exact
+            element={<Navigate replace to="/login" />}
+          />
+        )}
+
+
+
+        {user ? (
           <Route path="/" exact element={<Home />} />
         ) : (
           <Route path="/" exact element={<Navigate replace to="/login" />} />
@@ -249,6 +290,7 @@ function App() {
         ) : (
           <Route path="/login" exact element={<Login />} />
         )}
+
       </Routes>
     </BrowserRouter>
   );

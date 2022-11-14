@@ -103,7 +103,7 @@ function NewBill() {
   };
 
   useEffect(() => {
-    if (itemMaster.length == 0) {
+    if (itemMaster.length === 0) {
       getAllItemMaster();
     }
     calculateTotalAmount();
@@ -169,7 +169,7 @@ function NewBill() {
           parseInt(quantity) > parseInt(obj.Auantity)
         ) {
           quantity = 1;
-        } else if (quantity == "") {
+        } else if (quantity === "") {
           quantity = 1;
         }
         calculateTotalAmount();
@@ -284,11 +284,6 @@ function NewBill() {
                   .map((item) => (
                     <Card.Body
                       key={item._id}
-                      // onClick={() => {
-                      //   if (prescription && prescription.includes(item) === false) {
-                      //     setPrescription([...prescription, item]);
-                      //   }
-                      // }}
                       onClick={() => selectBatch(item)}
                     >
                       {item.name}

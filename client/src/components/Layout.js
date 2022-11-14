@@ -42,6 +42,10 @@ function Layout() {
       name: "Check Request",
       path: "/check-request",
     },
+    {
+      name: "Supplier",
+      path: "/supplier",
+    },
   ];
 
   const storeMenu = [
