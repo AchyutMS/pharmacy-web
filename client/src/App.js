@@ -271,7 +271,7 @@ function App() {
           )
         ) : (
           <Route
-            path="/supplier"
+            path="/supplier-mapping"
             exact
             element={<Navigate replace to="/login" />}
           />

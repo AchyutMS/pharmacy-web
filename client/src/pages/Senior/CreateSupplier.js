@@ -55,7 +55,7 @@ function SupplierModal(props) {
             <Row className="mb-3">
                 <Form.Group as={Col} controlId="formGridName">
                     <Form.Label>Supplier Name</Form.Label>
-                    <Form.Control type="text" placeholder="Enter Supplier Name" onChange={(e)=>setSupplier({...supplier,name:e.target.value})}/>
+                    <Form.Control autocomplete="off" type="text" placeholder="Enter Supplier Name" onChange={(e)=>setSupplier({...supplier,name:e.target.value})}/>
                 </Form.Group>
             </Row>
             <Form.Group className="mb-3" controlId="formGridAddress">
@@ -95,9 +95,10 @@ function CreateSupplier() {
         }
       };
 
-      const handleSupplierMapping = (itemId) => {
-        sessionStorage.setItem("supplier", itemId);
-        navigate("/supplier-mapping");
+      const handleSupplierMapping = (supplier) => {
+        console.log(supplier)
+        
+        navigate("/supplier-mapping", { state: { supplier } });
       };
 
       useEffect(() => {
@@ -162,7 +163,7 @@ function CreateSupplier() {
                 return (
                   <tr
                     key={item._id}
-                    onClick={() => handleSupplierMapping(item._id)}
+                    onClick={() => handleSupplierMapping(item)}
                   >
                     <td>{item.id}</td>
                     <td>{item.name}</td>

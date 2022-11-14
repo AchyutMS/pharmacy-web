@@ -4,12 +4,20 @@ import axios from "axios";
 import { Row, Col, Form, Button } from "react-bootstrap";
 import Container from "react-bootstrap/Container";
 import Card from "react-bootstrap/Card";
+import { useLocation, useNavigate } from 'react-router-dom';
+import toast from "react-hot-toast";
+
 
 function SupplierMapping() {
+  
+  const { state } = useLocation();
+  const { supplier } = state || {};
+  
+  const navigate = useNavigate();
   const supplierId = sessionStorage.getItem("supplier");
   const [itemMaster, setItemMaster] = useState([]);
   const [search, setSearch] = useState("");
-  const [MapItem, setMapItem] = useState([]);
+  const [MapItem, setMapItem] = useState(supplier.items);
 
   const getAllItemMaster = async () => {
     try {
@@ -28,14 +36,38 @@ function SupplierMapping() {
   };
 
   const addMapItem = (item) => {
+    console.log(MapItem)
     var i;
     for (i = 0; i < MapItem.length; i++) {
-        if (MapItem[i] === item) {
+      // console.log(MapItem[i], 'ok', item, 'inside for loop')
+        if (MapItem[i].name === item.name && MapItem[i].id === item.id) {
             return true;
         }
     }
 
     return false;
+  }
+
+  const removeMapItem = (item) => {
+    setMapItem(arr => (
+      arr.filter((value, i) => value !== item)
+    ));
+  }
+
+  const saveItems = async () => {
+    try {
+      const response = await axios.post("/api/senior/save-supplier", {supplier, MapItem} , {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      if (response.data.success) {
+        toast.success(response.data.message);
+        navigate("/supplier");
+      }
+    } catch (error) {
+      console.log(error.message)
+    }
   }
 
   useEffect(() => {
@@ -47,7 +79,7 @@ function SupplierMapping() {
     <>
       <Layout />
       <Container>
-      <h1 className={`shadow-sm text-secondary mt-5 p-3`}>{supplierId && supplierId}</h1>
+      <h1 className={`shadow-sm text-secondary mt-5 p-3`}>{supplier && supplier.name}</h1>
         <Form>
           <Form.Group
             as={Row}
@@ -90,11 +122,16 @@ function SupplierMapping() {
               <Card className="border-success mb-3 mt-3">
                     {MapItem && 
                     MapItem.map((item) => (
-                        <Card.Body
-                        key={item._id}
-                      >
-                        {item.name}
-                      </Card.Body>
+                      <Card.Body
+                          className="shadow"
+                          key={item._id}
+                          onClick={() => {
+                              removeMapItem(item)
+                          }
+                          }
+                        >
+                          {item.name}
+                        </Card.Body>
                     ))
                     }
               </Card>
@@ -106,7 +143,7 @@ function SupplierMapping() {
               className="m-3 d-flex justify-content-end"
             //   onClick={generateBill}
             >
-              <Button variant="primary" size="lg">
+              <Button variant="primary" size="lg" onClick={saveItems}>
                 Save 
               </Button>
             </div>
