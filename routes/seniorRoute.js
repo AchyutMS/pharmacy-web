@@ -70,4 +70,5 @@ router.get("/get-all-suppliers", authMiddleware, async (req, res) => {
     }
   });
 
+
 module.exports = router;

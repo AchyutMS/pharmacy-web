@@ -10,6 +10,7 @@ const Supplier = require("../models/supplierModel");
 //Importing Libraries
 const mongoose = require("mongoose");
 const authMiddleware = require("../middlewares/authMiddleware");
+const PurchaseOrder = require("../models/purchaseOrderModel");
 
 router.get("/get-all-item-group", authMiddleware, async (req, res) => {
   try {
@@ -320,6 +321,40 @@ router.post("/get-supplier-details-from-id", authMiddleware, async (req, res) =>
     res
       .status(500)
       .send({ message: "Error getting Supplier Details", success: false, error });
+  }
+});
+
+router.post("/new-pur-order", authMiddleware, async (req, res) => {
+  try {
+    const supplier = req.body.selectedSupplier
+    const purDetials = req.body.state
+    const item = req.body.POItem
+
+    const newPurchaseOrder = new PurchaseOrder(
+      {supplier, item, purDetials}
+    )
+
+    await newPurchaseOrder.save()
+      
+    res.status(200).send({message:"Purchase Order Successful", success: true});
+  } catch (error) {
+    console.log(error);
+    res
+      .status(500)
+      .send({ message: "Purchase Order Failed", success: false, error });
+  }
+});
+
+router.get("/get-all-pur-order", authMiddleware, async (req, res) => {
+  try {
+    const allPurOrder = await PurchaseOrder.find()
+      
+    res.status(200).send({message:"Purchase Order Successful", success: true, data: allPurOrder});
+  } catch (error) {
+    console.log(error);
+    res
+      .status(500)
+      .send({ message: "Purchase Order Failed", success: false, error });
   }
 });
 
