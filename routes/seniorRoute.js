@@ -4,6 +4,7 @@ const router = express.Router()
 const RequestItem = require('../models/requestItemModel');
 const Supplier = require('../models/supplierModel');
 const authMiddleware = require('../middlewares/authMiddleware');
+const PurchaseOrder = require("../models/purchaseOrderModel");
 
 router.get('/check-request-item',authMiddleware, async(req,res) => {
     try {
@@ -52,7 +53,7 @@ router.get("/get-all-suppliers", authMiddleware, async (req, res) => {
     }
   });
 
-  router.post("/save-supplier", authMiddleware, async (req, res) => {
+router.post("/save-supplier", authMiddleware, async (req, res) => {
     try {
         const {supplier, MapItem } = req.body
       var suppliers = await Supplier.findById(supplier._id)
@@ -67,6 +68,30 @@ router.get("/get-all-suppliers", authMiddleware, async (req, res) => {
       res
         .status(500)
         .send({ message: "Error Updating Suppliers", success: false, error });
+    }
+  });
+
+router.post("/purchase-order-approval", authMiddleware, async (req, res) => {
+    try {
+      const poId = req.body.id;
+      const approval = req.body.approval;
+      if(approval){
+        const newPoDetails = await PurchaseOrder.findOne({_id: poId});
+        newPoDetails.isApproved = approval;
+        await newPoDetails.save()
+          
+        res.status(200).send({message:"Purchase Order Approval Successful", success: true});
+
+      } else {
+        await PurchaseOrder.findOneAndDelete({_id:poId});
+        res.status(200).send({message: "Purchase Order Request Rejected", success: false});
+      }
+
+    } catch (error) {
+      console.log(error);
+      res
+        .status(500)
+        .send({ message: "Purchase Order Approval Failed", success: false, error });
     }
   });
 

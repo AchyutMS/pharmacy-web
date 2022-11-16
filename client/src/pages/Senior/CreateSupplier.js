@@ -110,7 +110,7 @@ function CreateSupplier() {
     <>
     <Layout />
     <Container >
-    <h2 className="shadow-sm text-success mt-5 p-3">Supplier</h2>
+    <h2 className="shadow-sm text-secondary mt-5 p-3">Supplier</h2>
 
     <Form>
         <Form.Group as={Row} className="mb-3" controlId='formPlaintextName'>
@@ -123,7 +123,7 @@ function CreateSupplier() {
               />
             </Col>
 
-            <Col sm="2">
+            {/* <Col sm="2">
               <Button
                 variant="success"
                 size="md"
@@ -131,11 +131,11 @@ function CreateSupplier() {
               >
                 Load
               </Button>
-            </Col>
+            </Col> */}
 
             <Col sm="6">
               <Button
-                variant="success"
+                variant="secondary"
                 size="md"
                 onClick={() => setModalShow(true)}
               >

@@ -326,12 +326,24 @@ router.post("/get-supplier-details-from-id", authMiddleware, async (req, res) =>
 
 router.post("/new-pur-order", authMiddleware, async (req, res) => {
   try {
-    const supplier = req.body.selectedSupplier
-    const purDetials = req.body.state
-    const item = req.body.POItem
-
+    const supplier = req.body.selectedSupplier;
+    const purDetails = req.body.state;
+    const item = req.body.POItem;
+    
+    do {
+      var poNumber = Math.floor(100000 + Math.random() * 900000);
+      const allPurOrder = await PurchaseOrder.find();
+      var poExists = false;
+      allPurOrder.map(purchase=>{
+        if(purchase.poNumber === poNumber) {
+          poExists = true;
+        }
+      })
+    }
+    while (poExists);
+    console.log(poNumber)
     const newPurchaseOrder = new PurchaseOrder(
-      {supplier, item, purDetials}
+      {poNumber,supplier, item, purDetails,isApproved: false}
     )
 
     await newPurchaseOrder.save()
@@ -349,13 +361,23 @@ router.get("/get-all-pur-order", authMiddleware, async (req, res) => {
   try {
     const allPurOrder = await PurchaseOrder.find()
       
-    res.status(200).send({message:"Purchase Order Successful", success: true, data: allPurOrder});
+    res.status(200).send({message:"Purchase Orders Fetched", success: true, data: allPurOrder});
   } catch (error) {
     console.log(error);
     res
       .status(500)
-      .send({ message: "Purchase Order Failed", success: false, error });
+      .send({ message: "Error Fetching Purchase Orders", success: false, error });
   }
 });
+
+router.get('/get-purchase-order-detail/:poNumber', authMiddleware, async (req, res) => {
+  try {
+      const purchaseOrder = await PurchaseOrder.findOne({poNumber: req.params.poNumber})
+      res.status(200).send({ message: "Prescription details Fetched successfully", success: true, data: purchaseOrder});
+  } catch (error) {
+      console.log(error);
+      res.status(500).send({message: "Error getting precription details", success: false, error});
+  }
+})
 
 module.exports = router;

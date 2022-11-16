@@ -6,6 +6,7 @@ import { Row, Col, Form, Button } from "react-bootstrap";
 import Card from "react-bootstrap/Card";
 import Table from "react-bootstrap/Table";
 import jwt from 'jwt-decode'
+import toast from "react-hot-toast";
 
 function NewPurchaseOrder() {
     const [suppliers, setSuppliers] = useState([]);
@@ -20,7 +21,7 @@ function NewPurchaseOrder() {
   }
     
     let [state, setState] = useState({
-      PurOrderno : "",
+      // PurOrderno : "",
       OperName: operator.name,
       POType: "",
       MOPay: "",
@@ -68,7 +69,10 @@ function NewPurchaseOrder() {
               },
             });
             if (response.data.success) {
-              setSelectedSupplier(response.data.data);
+              if(selectedSupplier !== response.data.data){
+                setPOItem([]);
+                setSelectedSupplier(response.data.data);
+              }
             }
           } catch (error) {
             console.log(error);
@@ -91,6 +95,9 @@ function NewPurchaseOrder() {
       const handleClick = async(e) => {
         e.preventDefault()
         console.log('button clicked')
+        if(POItem.length <= 0){
+          toast.error("No items selected")
+        } else {
         try {
           const response = await axios.post("/api/store/new-pur-order", {state, POItem, selectedSupplier}, {
             headers: {
@@ -98,11 +105,14 @@ function NewPurchaseOrder() {
             },
           });
           if (response.data.success) {
-            console.log(response);
+            toast.success(response.data.message);
+            window.location.reload();
           }
         } catch (error) {
+          toast.error("Something went Wrong")
           console.log(error);
         }
+      }
       }
     
     useEffect(() => {
@@ -134,7 +144,7 @@ function NewPurchaseOrder() {
             </Form.Select>
             </Col>
 
-            <Form.Label column sm="2">
+            {/* <Form.Label column sm="2">
               Purchase Order No 
             </Form.Label>
             <Col sm="4">
@@ -145,7 +155,7 @@ function NewPurchaseOrder() {
                 placeholder="Purchase Order No"
                 onChange={updateInput}
               />
-            </Col>
+            </Col> */}
 
             
           </Form.Group>
@@ -223,7 +233,7 @@ function NewPurchaseOrder() {
         </Form>
 
 
-        <h2 className="shadow-sm text-success mt-5 p-3">Items To Be Requested(**Only Take the important fields**)</h2>
+        <h2 className="shadow-sm text-success mt-5 p-3">Items To Be Requested</h2>
     </Container>
         <Table striped bordered hover responsive="sm" center>
         <thead>
@@ -255,22 +265,22 @@ function NewPurchaseOrder() {
                 <tr>
                   <td>{index+1}</td>
                   <td>{item.name}</td>
-                  <td>{item.name}</td>
-                  <td>{item.name}</td>
-                  <td>{item.name}</td>
-                  <td>{item.name}</td>
-                  <td>{item.name}</td>
-                  <td>{item.name}</td>
-                  <td>{item.name}</td>
-                  <td>{item.name}</td>
-                  <td>{item.name}</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>-</td>
                   <td>{item.PurchasePrice}</td>
                   <td>{item.sellingprice}</td>
                   <td>{item.hsncode}</td>
                   <td>{item.CGST}</td>
                   <td>{item.IGST}</td>
                   <td>{item.SGST}</td>
-                  <td>{item.name}</td>
+                  <td>-</td>
                   <td><Button variant="danger" onClick={() => removeMapItem(item)}>Remove</Button></td>
                 </tr>
               )})}
@@ -364,12 +374,14 @@ function NewPurchaseOrder() {
             </Form.Group>
             </Col>
             
-            <Col sm="4">
-                <Button variant="success" onClick={(e) => handleClick(e)}>Save</Button>
-                <Button variant="success">Modify</Button>
-                <Button variant="success">Print</Button>
-                <Button variant="success">Clear</Button>
+            <Col sm="3">
+                <Button variant="danger">Clear</Button>
             </Col>
+             <div className="mb-2 btn btn-success col-12">
+             <Button variant="success" onClick={(e) => handleClick(e)}>Save</Button>
+             </div>
+                    
+            <Button variant="warning">Print</Button>
 
         </Form.Group>
 

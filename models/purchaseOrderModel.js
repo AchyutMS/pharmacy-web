@@ -1,9 +1,11 @@
 const mongoose = require('mongoose');
 
 const purchaseOrderSchema = new mongoose.Schema({
-        supplier: Array,
+        poNumber: Number,
+        supplier: Object,
         item: Array,
-        purDetials: Array
+        purDetails: Object,
+        isApproved: Boolean,
 
 },{timestamps:true});
 

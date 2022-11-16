@@ -25,6 +25,7 @@ import CreateSupplier from "./pages/Senior/CreateSupplier";
 import SupplierMapping from "./pages/Senior/SupplierMapping";
 import PurchaseOrder from "./pages/Store/PurchaseOrder";
 import NewPurchaseOrder from "./pages/Store/NewPurchaseOrder";
+import PurchaseOrderDetails from "./pages/Store/PurchaseOrderDetails";
 
 
 function App() {
@@ -226,7 +227,7 @@ function App() {
         )}
 
         {user ? (
-          user.operator.role === "store" ? (
+          user.operator.role === "store" || user.operator.role==="senior" ? (
             <Route path="/purchase-order" element={<PurchaseOrder />} />
           ) : (
             <Route
@@ -243,8 +244,9 @@ function App() {
           />
         )}
 
+
         {user ? (
-          user.operator.role === "store" ? (
+          user.operator.role === "store" || user.operator.role === "senior" ? (
             <Route path="/new-purchase-order" element={<NewPurchaseOrder />} />
           ) : (
             <Route
@@ -260,6 +262,27 @@ function App() {
             element={<Navigate replace to="/login" />}
           />
         )}
+
+
+        {user ? (
+          user.operator.role === "store" || user.operator.role === "senior" ? (
+            <Route path="/purchase-order/:id" element={<PurchaseOrderDetails />} />
+          ) : (
+            <Route
+              path="/purchase-order/:id"
+              exact
+              element={<Navigate replace to="/" />}
+            />
+          )
+        ) : (
+          <Route
+            path="/patient-record/:id"
+            exact
+            element={<Navigate replace to="/login" />}
+          />
+        )}
+
+
 
         {user ? (
           user.operator.role === "senior" ? (
@@ -315,7 +338,6 @@ function App() {
             element={<Navigate replace to="/login" />}
           />
         )}
-
 
 
         {user ? (

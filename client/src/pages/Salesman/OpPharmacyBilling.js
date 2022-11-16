@@ -3,7 +3,7 @@ import axios from 'axios';
 import ReactToPrint from "react-to-print";
 import { useSelector, useDispatch } from "react-redux";
 import { Row, Col, Form, Button } from "react-bootstrap";
-import { useNavigate,Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Container from 'react-bootstrap/Container';
 import Card from 'react-bootstrap/Card';
 
