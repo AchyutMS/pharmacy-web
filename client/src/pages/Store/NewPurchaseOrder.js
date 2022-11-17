@@ -193,6 +193,7 @@ function NewPurchaseOrder() {
             <Form.Control
                 name="search"
                 type="text"
+                autocomplete='off'
                 placeholder="Search Item Name"
                 onChange={(e) => setSearch(e.target.value.toLowerCase())}
               />

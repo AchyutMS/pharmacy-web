@@ -4,7 +4,7 @@ import jwt from "jwt-decode";
 
 import Layout from "../../components/Layout";
 import Container from "react-bootstrap/Container";
-import { Row, Col, Form, Button } from "react-bootstrap";
+import { Row, Col, Form, Button , Table} from "react-bootstrap";
 import axios from "axios";
 import toast from "react-hot-toast";
 import Card from "react-bootstrap/Card";
@@ -229,15 +229,27 @@ function PurchaseOrder() {
           </Col>
         </Form>
 
+
+
+        <Table striped bordered hover responsive="sm" center>
+        <thead>
+          <tr>
+            <th>PO Number</th>
+            <th>Supplier Name</th>
+            <th>View</th>
+            <th>Status</th>
+           
+          </tr>
+        </thead>
+        <tbody>
         {allPurchaseOrder &&
-          allPurchaseOrder.map((purchase) => (
-            <div key={purchase.poNumber}>
-              <Card body className="mb-2">
-                <div className="d-flex justify-content-between">
-                  <div className="p-2">
-                    <b>{purchase.supplier.name}</b>
-                    <div>{purchase.poNumber}</div>
-                    <Button
+          allPurchaseOrder.map((purchase) => {
+              return (
+                <tr>
+                <td>{purchase.supplier.name}</td>
+                <td>{purchase.poNumber}</td>
+                <td>
+                  <Button
                       variant={`${color}`}
                       size="sm"
                       onClick={() =>
@@ -245,14 +257,10 @@ function PurchaseOrder() {
                       }
                     >
                       View
-                    </Button>
-                  </div>
-
-                  <div className="p-2">
-                    <div className="d-flex">
-                      {/* <Print ref={componentRef} detials={prescription}/> */}
-
-                      {operator?.role == "store" ? (
+                  </Button>
+                </td>
+                <td>
+                {operator?.role == "store" ? (
                         purchase.isApproved ? (
                           <Button variant="success" size="sm">
                             Appoved
@@ -284,12 +292,11 @@ function PurchaseOrder() {
                           </Button>
                         </>
                       )}
-                    </div>
-                  </div>
-                </div>
-              </Card>
-            </div>
-          ))}
+                </td>
+                </tr>
+              )})}
+        </tbody>
+      </Table>
       </Container>
     </>
   );
