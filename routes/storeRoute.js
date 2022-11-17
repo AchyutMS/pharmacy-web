@@ -380,4 +380,48 @@ router.get('/get-purchase-order-detail/:poNumber', authMiddleware, async (req, r
   }
 })
 
+
+router.post("/filter-pur-order", authMiddleware, async (req, res) => {
+  try {
+    // const { fromDate, toDate, supplierName, poNumber } = req.body
+
+    const date = new Date();
+
+    let day = date.getDate() + 1;
+    let month = date.getMonth() + 1;
+    let year = date.getFullYear();
+
+    let currentDate = `${year}-${month}-${day}`;
+
+    var fromDate = req.body.fromDate !== "" ? req.body.fromDate : "1990-09-22"
+    var toDate = req.body.toDate !== "" ? req.body.toDate : currentDate
+    var poNumber = req.body.poNumber
+    var supplierName = req.body.supplierName
+
+    console.log('supplierName',poNumber)
+    
+    var allPurOrder
+
+    if (supplierName == "") {
+      allPurOrder = await PurchaseOrder.find({createdAt: {$gte: fromDate, $lt: toDate}})
+    } else {
+      allPurOrder = await PurchaseOrder.find({createdAt: {$gte: fromDate, $lt: toDate}, 'supplier.name': supplierName})
+    }
+
+      var PurOrder = allPurOrder.filter(checkPoNumber)
+      function checkPoNumber(pur){
+        return String(pur.poNumber).includes(poNumber)
+      }
+
+      console.log(PurOrder)
+
+    res.status(200).send({message:"Purchase Orders Fetched", success: true, data: PurOrder});
+  } catch (error) {
+    console.log(error);
+    res
+      .status(500)
+      .send({ message: "Error Fetching Purchase Orders", success: false, error });
+  }
+});
+
 module.exports = router;

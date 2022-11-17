@@ -23,12 +23,12 @@ function NewPurchaseOrder() {
     let [state, setState] = useState({
       // PurOrderno : "",
       OperName: operator.name,
-      POType: "",
-      MOPay: "",
-      MODispatch: "",
-      PTandC: "",
+      POType: "Normal Purchase (NP)",
+      MOPay: "NEFT",
+      MODispatch: "Direct dispatch by vendor",
+      PTandC: "10 days payment",
       remarks: "",
-      DelDateFrom : "",
+      DelDateFrom : "SIMS vadapalani",
       DelDateTo : "" ,
       DelTo : "" ,
     });
@@ -223,7 +223,6 @@ function NewPurchaseOrder() {
             </Form.Label>
             <Col sm="4">
             <Form.Select aria-label="Default select example" name="POType" onChange={updateInput}>
-                <option value=""></option>
                 <option value="Normal Purchase (NP)">Normal Purchase (NP)</option>
                 <option value="Other Purchase (OP)">Other Purchase (OP)</option>
             </Form.Select>
@@ -295,7 +294,6 @@ function NewPurchaseOrder() {
             </Form.Label>
             <Col sm="4">
             <Form.Select aria-label="Default select example" name="MOPay" onChange={updateInput}>
-                <option value=""></option>
                 <option value="NEFT">NEFT</option>
                 <option value="Other">Other</option>
             </Form.Select>
@@ -306,7 +304,6 @@ function NewPurchaseOrder() {
             </Form.Label>
             <Col sm="4">
             <Form.Select aria-label="Default select example" name="MODispatch" onChange={updateInput}>
-            <option value=""></option>
                 <option value="Direct dispatch by vendor">Direct dispatch by vendor</option>
                 <option value="Other">Other</option>
             </Form.Select>
@@ -319,7 +316,6 @@ function NewPurchaseOrder() {
             </Form.Label>
             <Col sm="4">
             <Form.Select aria-label="Default select example" name="PTandC" onChange={updateInput}>
-            <option value=""></option>
                 <option value="10 days payment">10 days payment</option>
                 <option value="30 days payment">30 days payment</option>
                 <option value="45 days payment">45 days payment</option>
@@ -331,7 +327,6 @@ function NewPurchaseOrder() {
             </Form.Label>
             <Col sm="4">
             <Form.Select aria-label="Default select example" name="DelTo" onChange={updateInput}>
-            <option value=""></option>
                 <option value="SIMS vadapalani">SIMS vadapalani</option>
                 <option value="Other">Other</option>
             </Form.Select>
@@ -346,6 +341,7 @@ function NewPurchaseOrder() {
             <Form.Control
                 name="DelDateFrom"
                 type="date"
+                required
                 autocomplete='off'
                 onChange={updateInput}
               />
@@ -358,6 +354,7 @@ function NewPurchaseOrder() {
             <Form.Control
                 name="DelDateTo"
                 type="date"
+                required
                 autocomplete='off'
                 onChange={updateInput}
               />
