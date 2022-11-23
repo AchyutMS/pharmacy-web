@@ -55,7 +55,7 @@ router.get("/get-all-suppliers", authMiddleware, async (req, res) => {
 
 router.post("/save-supplier", authMiddleware, async (req, res) => {
     try {
-        const {supplier, MapItem } = req.body
+      const {supplier, MapItem } = req.body
       var suppliers = await Supplier.findById(supplier._id)
       console.log(suppliers)
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from 'axios';
-import Layout from '../../components/Layout';
+
 import Container from 'react-bootstrap/Container';
 import { Row, Col, Form, Button } from "react-bootstrap";
 import Card from "react-bootstrap/Card";
@@ -8,17 +8,29 @@ import Table from "react-bootstrap/Table";
 import jwt from 'jwt-decode'
 import toast from "react-hot-toast";
 
+import Layout from '../../components/Layout';
+
 function NewPurchaseOrder() {
     const [suppliers, setSuppliers] = useState([]);
     const [search, setSearch] = useState('');
     const [selectedSupplier, setSelectedSupplier] = useState();
     const [POItem, setPOItem] = useState([]);
+    const [totalAmount,setTotalAmount] = useState(0);
     const token = localStorage.getItem("token");
   var operator;
 
   if (token) {
     operator = jwt(token).operator;
   }
+
+  const color =
+  operator && operator.role === "admin"
+    ? "danger"
+    : operator && operator.role === "senior"
+    ? "secondary"
+    : operator && operator.role === "store"
+    ? "success"
+    : "primary";
     
     let [state, setState] = useState({
       // PurOrderno : "",
@@ -99,7 +111,7 @@ function NewPurchaseOrder() {
           toast.error("No items selected")
         } else {
         try {
-          const response = await axios.post("/api/store/new-pur-order", {state, POItem, selectedSupplier}, {
+          const response = await axios.post("/api/store/new-pur-order", {state, POItem, selectedSupplier, totalAmount}, {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
@@ -114,10 +126,54 @@ function NewPurchaseOrder() {
         }
       }
       }
+
+      const handleChange = (e,id) => {
+        var newPOItem = [];
+
+        POItem.map(item => {
+          if(item.id == id){
+            item[e.target.name] = parseInt(e.target.value);
+          } 
+          item.rate = item.qty && item.ratePerUnit && item.qty * item.ratePerUnit;
+          
+          // discounted_price = original_price - (original_price * discount / 100)
+          item.discountAmount = item.rate;
+          item.discountAmount = item.rate && item.discountPercentage && item.rate - (item.rate * item.discountPercentage / 100);
+          item.discountAmount = item.discountAmount && parseFloat(item.discountAmount).toFixed(2);
+          
+          // GST Amount = (Original Cost*GST Rate Percentage) / 100
+          item.GSTAmount = item.rate && item.rate;
+          item.GSTAmount = item.rate && item.GSTPercentage && (item.rate * item.GSTPercentage / 100);
+          
+          //Net Amount and Total Amount
+          item.netAmount = item.discountAmount && item.GSTAmount && (item.discountAmount+item.GSTAmount).toFixed(2);
+          item.totalAmount = item.netAmount && Math.round(item.netAmount);
+          newPOItem = [...newPOItem, item];
+        })
+
+        console.log(newPOItem)
+        setPOItem(newPOItem);
+
+      } 
     
+      const calculateTotalAmount = () => {
+        var total = 0;
+        POItem.map(item=>{
+          if(item.totalAmount){
+            total = total + item.totalAmount;
+          } else {
+            total = total;
+          }
+        });
+        setTotalAmount(total);
+      }
+
     useEffect(() => {
+      if(suppliers.length === 0){
         getAllSuppliers();
-      }, []);
+      }
+        calculateTotalAmount();
+      }, [POItem]);
 
     // console.log(suppliers)
     // console.log(POItem)
@@ -126,7 +182,7 @@ function NewPurchaseOrder() {
     <>
     <Layout />
     <Container>
-        <h1 className="shadow-sm text-success mt-5 p-3">New Purchase Order</h1>
+        <h1 className={`shadow-sm text-{${color}} mt-5 p-3`}>New Purchase Order</h1>
         
         <Form>
         <Form.Group as={Row} className="mb-3" controlId="formPlaintextName">
@@ -138,26 +194,11 @@ function NewPurchaseOrder() {
                 <option>Select Supplier</option>
                 {
                     suppliers && suppliers.map(item => (
-                        <option value={item._id}>{item.name}</option>
+                        <option value={item._id}>{item.Name}</option>
                     ))
                 }
             </Form.Select>
-            </Col>
-
-            {/* <Form.Label column sm="2">
-              Purchase Order No 
-            </Form.Label>
-            <Col sm="4">
-            <Form.Control
-                name="PurOrderno"
-                type="text"
-                autocomplete='off'
-                placeholder="Purchase Order No"
-                onChange={updateInput}
-              />
-            </Col> */}
-
-            
+            </Col>           
           </Form.Group>
 
           
@@ -168,7 +209,7 @@ function NewPurchaseOrder() {
             </Form.Label>
             <Col sm="4">
             <Form.Group className="mb-3" controlId="formGridAddress">   
-                <Form.Control as="textarea" rows={3} value={selectedSupplier?.address}/>
+                <Form.Control as="textarea" rows={3} value={selectedSupplier?.oAddress}/>
             </Form.Group>
             </Col>
 
@@ -233,29 +274,24 @@ function NewPurchaseOrder() {
         </Form>
 
 
-        <h2 className="shadow-sm text-success mt-5 p-3">Items To Be Requested</h2>
+        <h2 className={`shadow-sm text-{${color}} mt-5 p-3`}>Items To Be Requested</h2>
     </Container>
         <Table striped bordered hover responsive="sm" center>
         <thead>
           <tr>
             <th>S.No</th>
             <th>Item Name</th>
-            <th>Units</th>
-            <th>Contains</th>
+            {/* <th>Units</th>
+            <th>Contains</th> */}
             <th>QTY</th>
-            <th>Rate</th>
             <th>Rate/Unit</th>
+            <th>Rate</th>
             <th>Discount(%)</th>
             <th>GST(%)</th>
             <th>Discount Amount</th>
             <th>GST Amount</th>
-            <th>Total Amount</th>
             <th>Net Amount</th>
-            <th>HSN Code</th>
-            <th>SGST</th>
-            <th>CGST</th>
-            <th>IGST</th>
-            <th>POReqno</th>
+            <th>Total Amount</th>
             <th>Action</th>
           </tr>
         </thead>
@@ -265,27 +301,55 @@ function NewPurchaseOrder() {
                 <tr>
                   <td>{index+1}</td>
                   <td>{item.name}</td>
-                  <td>-</td>
-                  <td>-</td>
-                  <td>-</td>
-                  <td>-</td>
-                  <td>-</td>
-                  <td>-</td>
-                  <td>-</td>
-                  <td>-</td>
-                  <td>-</td>
-                  <td>{item.PurchasePrice}</td>
-                  <td>{item.sellingprice}</td>
-                  <td>{item.hsncode}</td>
-                  <td>{item.CGST}</td>
-                  <td>{item.IGST}</td>
-                  <td>{item.SGST}</td>
-                  <td>-</td>
+                  <td>
+                      <input
+                        type="number"
+                        name="qty"
+                        min="0"
+                        onChange={(e)=> handleChange(e,item.id)}
+                        required
+                      />
+                  </td>
+                  <td>
+                    <input
+                        type="number"
+                        name="ratePerUnit"
+                        min="0"
+                        onChange={(e)=> handleChange(e,item.id)}
+                        required
+                      />
+                  </td>
+                  <td>{item.rate && item.rate}</td>
+                  <td>
+                    <input
+                        type="number"
+                        name="discountPercentage"
+                        min="0"
+                        onChange={(e)=> handleChange(e,item.id)}
+                        required
+                      />
+                  </td>
+                  <td>
+                  <input
+                        type="number"
+                        name="GSTPercentage"
+                        min="0"
+                        onChange={(e)=> handleChange(e,item.id)}
+                        required
+                      />
+                  </td>
+                  <td>{item.discountAmount && item.discountAmount}</td>
+                  <td>{item.GSTAmount && item.GSTAmount}</td>
+                  <td>{item.netAmount && item.netAmount}</td>
+                  <td>{item.totalAmount && item.totalAmount}</td>
                   <td><Button variant="danger" onClick={() => removeMapItem(item)}>Remove</Button></td>
                 </tr>
               )})}
         </tbody>
       </Table>
+      <h2 className={`shadow-sm text-{${color}} mt-5 p-3`}>
+        Total Amount: Rs. {totalAmount && totalAmount}
+      </h2>
           
                 <Container className="mt-5">
           <Form>

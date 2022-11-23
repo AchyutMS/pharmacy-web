@@ -2,11 +2,11 @@ const mongoose = require('mongoose');
 
 const supplierSchema = new mongoose.Schema(
     {   
-        name: {
+        Name: {
             type:String,
             required: true
         },
-        address: {
+        oAddress: {
             type:String,
             required: true
         },

@@ -151,7 +151,6 @@ router.get("/get-all-items-master", authMiddleware, async (req, res) => {
   }
 });
 
-
 router.post("/get-item-details-from-id", authMiddleware, async (req, res) => {
   console.log("ItemID",req.body.itemId)
   try {
@@ -324,12 +323,15 @@ router.post("/get-supplier-details-from-id", authMiddleware, async (req, res) =>
   }
 });
 
+//Purchase Order
+
 router.post("/new-pur-order", authMiddleware, async (req, res) => {
   try {
     const supplier = req.body.selectedSupplier;
     const purDetails = req.body.state;
     const item = req.body.POItem;
-    
+    const poTotal = req.body.totalAmount;
+
     do {
       var poNumber = Math.floor(100000 + Math.random() * 900000);
       const allPurOrder = await PurchaseOrder.find();
@@ -343,7 +345,7 @@ router.post("/new-pur-order", authMiddleware, async (req, res) => {
     while (poExists);
     console.log(poNumber)
     const newPurchaseOrder = new PurchaseOrder(
-      {poNumber,supplier, item, purDetails,isApproved: false}
+      {poNumber,supplier, item, purDetails, poTotal, isApproved: false}
     )
 
     await newPurchaseOrder.save()
@@ -380,11 +382,10 @@ router.get('/get-purchase-order-detail/:poNumber', authMiddleware, async (req, r
   }
 })
 
-
 router.post("/filter-pur-order", authMiddleware, async (req, res) => {
   try {
     // const { fromDate, toDate, supplierName, poNumber } = req.body
-
+    console.log(req.body)
     const date = new Date();
 
     let day = date.getDate() + 1;
@@ -405,14 +406,15 @@ router.post("/filter-pur-order", authMiddleware, async (req, res) => {
     if (supplierName == "") {
       allPurOrder = await PurchaseOrder.find({createdAt: {$gte: fromDate, $lt: toDate}})
     } else {
-      allPurOrder = await PurchaseOrder.find({createdAt: {$gte: fromDate, $lt: toDate}, 'supplier.name': supplierName})
+      allPurOrder = await PurchaseOrder.find({createdAt: {$gte: fromDate, $lt: toDate}, 'supplier.Name': supplierName})
     }
 
-      var PurOrder = allPurOrder.filter(checkPoNumber)
+      
       function checkPoNumber(pur){
         return String(pur.poNumber).includes(poNumber)
       }
-
+      var PurOrder = allPurOrder.filter(checkPoNumber)
+      
       console.log(PurOrder)
 
     res.status(200).send({message:"Purchase Orders Fetched", success: true, data: PurOrder});
@@ -423,5 +425,24 @@ router.post("/filter-pur-order", authMiddleware, async (req, res) => {
       .send({ message: "Error Fetching Purchase Orders", success: false, error });
   }
 });
+
+
+//GRN
+router.post('/get-purchase-order-details-from-poNumber', authMiddleware, async (req, res) => {
+  try {
+    console.log(req.body.poNumber)
+      const purchaseOrder = await PurchaseOrder.findOne({poNumber: req.body.poNumber})
+      if(purchaseOrder){
+        res.status(200).send({ message: "Purchase Order details Fetched successfully", success: true, data: purchaseOrder});
+      } else {
+        res.status(200).send({ message: "Purchase Order Not Found", success: false, data: purchaseOrder});
+      }
+
+  } catch (error) {
+      console.log(error);
+      res.status(500).send({message: "Error getting purchase order details", success: false, error});
+  }
+})
+
 
 module.exports = router;

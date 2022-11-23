@@ -5,8 +5,8 @@ const purchaseOrderSchema = new mongoose.Schema({
         supplier: Object,
         item: Array,
         purDetails: Object,
+        poTotal: Number,
         isApproved: Boolean,
-
 },{timestamps:true});
 
 const purchaseOrderModel = new mongoose.model("purchase order", purchaseOrderSchema);

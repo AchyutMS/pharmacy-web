@@ -50,6 +50,10 @@ function Layout() {
       name: "Purchase Order",
       path: "/purchase-order",
     },
+    {
+      name: "GRN",
+      path: "/grn",
+    },
   ];
 
   const storeMenu = [
@@ -68,6 +72,10 @@ function Layout() {
     {
       name: "Purchase Order",
       path: "/purchase-order",
+    },
+    {
+      name: "GRN",
+      path: "/grn",
     },
   ];
   

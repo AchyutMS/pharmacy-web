@@ -26,7 +26,8 @@ import SupplierMapping from "./pages/Senior/SupplierMapping";
 import PurchaseOrder from "./pages/Store/PurchaseOrder";
 import NewPurchaseOrder from "./pages/Store/NewPurchaseOrder";
 import PurchaseOrderDetails from "./pages/Store/PurchaseOrderDetails";
-
+import GRN from "./pages/Store/GRN";
+import NewGRN from "./pages/Store/NewGRN";
 
 function App() {
   const { loading } = useSelector((state) => state.alerts);
@@ -282,7 +283,42 @@ function App() {
           />
         )}
 
+        
+        {user ? (
+          user.operator.role === "store" || user.operator.role === "senior" ? (
+            <Route path="/grn" element={<GRN />} />
+          ) : (
+            <Route
+              path="/grn"
+              exact
+              element={<Navigate replace to="/" />}
+            />
+          )
+        ) : (
+          <Route
+            path="/grn"
+            exact
+            element={<Navigate replace to="/login" />}
+          />
+        )}
 
+        {user ? (
+          user.operator.role === "store" || user.operator.role === "senior" ? (
+            <Route path="/new-grn" element={<NewGRN />} />
+          ) : (
+            <Route
+              path="/new-grn"
+              exact
+              element={<Navigate replace to="/" />}
+            />
+          )
+        ) : (
+          <Route
+            path="/new-grn"
+            exact
+            element={<Navigate replace to="/login" />}
+          />
+        )}
 
         {user ? (
           user.operator.role === "senior" ? (

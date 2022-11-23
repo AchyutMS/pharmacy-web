@@ -11,8 +11,8 @@ import Modal from 'react-bootstrap/Modal';
 
 function SupplierModal(props) {
     const [supplier, setSupplier] = useState({
-        name:'',
-        address:'',
+        Name:'',
+        oAddress:'',
     });
 
     const saveSupplier = async () => {
@@ -55,12 +55,12 @@ function SupplierModal(props) {
             <Row className="mb-3">
                 <Form.Group as={Col} controlId="formGridName">
                     <Form.Label>Supplier Name</Form.Label>
-                    <Form.Control autocomplete="off" type="text" placeholder="Enter Supplier Name" onChange={(e)=>setSupplier({...supplier,name:e.target.value})}/>
+                    <Form.Control autocomplete="off" type="text" placeholder="Enter Supplier Name" onChange={(e)=>setSupplier({...supplier,Name:e.target.value})}/>
                 </Form.Group>
             </Row>
             <Form.Group className="mb-3" controlId="formGridAddress">
                 <Form.Label>Supplier Address</Form.Label>
-                <Form.Control as="textarea" rows={3} onChange={(e)=>setSupplier({...supplier,address:e.target.value})}/>
+                <Form.Control as="textarea" rows={3} onChange={(e)=>setSupplier({...supplier,oAddress:e.target.value})}/>
             </Form.Group>
         </Form>
         </Modal.Body>
@@ -157,7 +157,7 @@ function CreateSupplier() {
         {suppliers &&
             suppliers
               .filter(
-                (item) => item.name && item.name.toLowerCase().includes(search)
+                (item) => item.Name && item.Name.toLowerCase().includes(search)
               )
               .map((item) => {
                 return (
@@ -166,8 +166,8 @@ function CreateSupplier() {
                     onClick={() => handleSupplierMapping(item)}
                   >
                     <td>{item.id}</td>
-                    <td>{item.name}</td>
-                    <td>{item.address}</td>
+                    <td>{item.Name}</td>
+                    <td>{item.oAddress}</td>
                   </tr>
                 );
               })}

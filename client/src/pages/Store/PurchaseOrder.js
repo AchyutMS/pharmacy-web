@@ -213,7 +213,7 @@ function PurchaseOrder() {
                 <option>Select Supplier</option>
                 {suppliers &&
                   suppliers.map((item) => (
-                    <option value={item.name}>{item.name}</option>
+                    <option value={item.Name}>{item.Name}</option>
                   ))}
               </Form.Select>
             </Col>
@@ -246,8 +246,8 @@ function PurchaseOrder() {
           allPurchaseOrder.map((purchase) => {
               return (
                 <tr>
-                <td>{purchase.supplier.name}</td>
                 <td>{purchase.poNumber}</td>
+                <td>{purchase.supplier.Name}</td>
                 <td>
                   <Button
                       variant={`${color}`}

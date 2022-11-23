@@ -79,7 +79,7 @@ function SupplierMapping() {
     <>
       <Layout />
       <Container>
-      <h1 className={`shadow-sm text-secondary mt-5 p-3`}>{supplier && supplier.name}</h1>
+      <h1 className={`shadow-sm text-secondary mt-5 p-3`}>{supplier && supplier.Name}</h1>
         <Form>
           <Form.Group
             as={Row}

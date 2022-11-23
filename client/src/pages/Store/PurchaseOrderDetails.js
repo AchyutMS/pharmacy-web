@@ -25,7 +25,7 @@ function PurchaseOrderDetails() {
     ? "danger"
     : operator && operator.role === "senior"
     ? "secondary"
-    : operator && operator.role === "store"
+    : operator && operator.role === "store" 
     ? "success"
     : "primary";
 
@@ -72,7 +72,7 @@ function PurchaseOrderDetails() {
               <Form.Control
                 name="OperName"
                 type="text"
-                value={poDetails?.supplier.name}
+                value={poDetails?.supplier.Name}
               />
             </Col>
           </Form.Group>
@@ -86,7 +86,7 @@ function PurchaseOrderDetails() {
                 <Form.Control
                   as="textarea"
                   rows={3}
-                  value={poDetails?.supplier.address}
+                  value={poDetails?.supplier.oAddress}
                 />
               </Form.Group>
             </Col>
