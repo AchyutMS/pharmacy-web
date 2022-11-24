@@ -11,8 +11,7 @@ import Layout from '../../components/Layout'
 
 function NewGRN() {
     const [poNumber, setpoNumber] = useState();
-    const [poDetails, setPoDetails] = useState({});
-
+    const [poDetails, setPoDetails] = useState();
     const token = localStorage.getItem("token");
     var operator;
 
@@ -28,6 +27,19 @@ function NewGRN() {
       : operator && operator.role === "store"
       ? "success"
       : "primary";
+
+      const [GRN, setGRN] = useState({
+        poDetails: {},
+        invoice: {
+          invoiceNumber: '',
+          invoiceDate: '',
+        },
+        deliveryDate:'',
+        GRNNumber: '',
+        GRNType: '',
+        GRNItem: [],
+        operator: operator,
+      })
 
 
       const handleLoad = async (e) => {
@@ -52,7 +64,55 @@ function NewGRN() {
         }
       }
 
-console.log(poDetails)
+
+      const handleChange = (e,id) => {
+        var newGRNItem = [];
+
+        GRN.GRNItem.map(item => {
+          if(item.id == id){
+            if(e.target.name == 'batchNo' || e.target.name == 'expiryDate'){
+              item[e.target.name] = e.target.value;
+            } else {
+              item[e.target.name] = parseInt(e.target.value);
+            }
+          } 
+          newGRNItem = [...newGRNItem, item];
+        })
+
+
+        var newGRN = {
+          poDetails: poDetails && poDetails,
+          invoice: {
+            invoiceNumber: '',
+            invoiceDate: '',
+          },
+          deliveryDate:'',
+          GRNNumber: '',
+          GRNType: '',
+          GRNItem: newGRNItem,
+          operator: operator,
+        }
+        setGRN(newGRN);
+      } 
+
+      useEffect(()=> {
+        var newGRN = {
+          poDetails: poDetails && poDetails,
+          invoice: {
+            invoiceNumber: '',
+            invoiceDate: '',
+          },
+          deliveryDate:'',
+          GRNNumber: '',
+          GRNType: '',
+          GRNItem: poDetails && poDetails.item,
+          operator: operator,
+        }
+        setGRN(newGRN);
+      },[poDetails])
+
+console.log(poDetails && poDetails)
+console.log(GRN && GRN)
 
   return (
     <>
@@ -95,7 +155,7 @@ console.log(poDetails)
                 name="OperName"
                 type="text"
                 disabled
-                value={poDetails?.supplier.Name}
+                value={poDetails && poDetails?.supplier?.Name}
               />
             </Col>
 
@@ -108,7 +168,7 @@ console.log(poDetails)
                   as="textarea"
                   rows={3}
                   disabled
-                  value={poDetails?.supplier.oAddress}
+                  value={poDetails && poDetails?.supplier?.oAddress}
                 />
               </Form.Group>
             </Col>
@@ -116,31 +176,133 @@ console.log(poDetails)
 
           <Form.Group as={Row} className="mb-3" controlId="formPlaintextName">
             <Form.Label column sm="2">
-              PurOrder Type
+              Invoice Number
             </Form.Label>
             <Col sm="4">
               <Form.Control
-                disabled
-                name="OperName"
+                name="invoiceNumber"
                 type="text"
-                value={poDetails?.purDetails?.POType}
               />
             </Col>
 
-            {/* <Form.Label column sm="3">
-              Operator Name
+            <Form.Label column sm="2">
+              Invoice Date
             </Form.Label>
-            <Col sm="3">
+            <Col sm="4">
               <Form.Control
-                disabled
-                name="OperName"
-                type="text"
-                // value={poDetails?.purDetails.OperName}
+                name="invoiceDate"
+                type="date"
               />
-            </Col> */}
-            
+            </Col>            
           </Form.Group>
+
+          <Form.Group as={Row} className="mb-3" controlId="formPlaintextName">
+          
+          <Form.Label column sm="2">
+              GRN Number
+            </Form.Label>
+            <Col sm="4">
+              <Form.Control
+                name="GRNNumber"
+                type="text"
+              />
+            </Col>  
+
+            <Form.Label column sm="2">
+              Delivery Date
+            </Form.Label>
+            <Col sm="4">
+              <Form.Control
+                name="deliveryDate"
+                type="date"
+              />
+            </Col>          
+          </Form.Group>
+
+          <Form.Group as={Row} className="mb-3" controlId="formPlaintextName">
+          
+          <Form.Label column sm="2">
+              GRN Type
+            </Form.Label>
+            <Col sm="4">
+            <Form.Select aria-label="Default select example" name="GRNType">
+                <option value="Partial GRN">Partial GRN</option>
+                <option value="Complete GRN">Complete GRN</option>
+            </Form.Select>
+            </Col>
+
+          </Form.Group>
+
         </Form>
+
+        <Table striped bordered hover responsive="sm" center>
+        <thead>
+          <tr>
+            <th>S.No</th>
+            <th>Item Name</th>
+            <th>Received Quantity</th>
+            <th>Free Quantity</th>
+            <th>Purchase Rate/Unit</th>
+            <th>MRP</th>
+            <th>Batch No.</th>
+            <th>Expiry Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          {poDetails && poDetails?.item.map((item, index) => {
+            return (
+              <tr>
+                <td>{index + 1}</td>
+                <td>{item.name}</td>
+                <td>
+                <input
+                        type="number"
+                        name="recievedQuantity"
+                        min="0"
+                        onChange={(e)=> handleChange(e,item.id)}
+                        required
+                      />
+                </td>
+                <td>
+                <input
+                        type="number"
+                        name="freeQuantity"
+                        min="0"
+                        onChange={(e)=> handleChange(e,item.id)}
+                        required
+                      />
+                </td>
+                <td>{item.ratePerUnit}</td>
+                <td>
+                <input
+                        type="number"
+                        name="MRP"
+                        min="0"
+                        onChange={(e)=> handleChange(e,item.id)}
+                        required
+                      />
+                </td>
+                <td>
+                <input
+                        type="text"
+                        name="batchNo"
+                        onChange={(e)=> handleChange(e,item.id)}
+                        required
+                      />
+                </td>
+                <td>
+                <input
+                        type="date"
+                        name="expiryDate"
+                        onChange={(e)=> handleChange(e,item.id)}
+                        required
+                      />
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </Table>
 
         </Container>
     </>
