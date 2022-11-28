@@ -26,6 +26,7 @@ import SupplierMapping from "./pages/Senior/SupplierMapping";
 import PurchaseOrder from "./pages/Store/PurchaseOrder";
 import NewPurchaseOrder from "./pages/Store/NewPurchaseOrder";
 import PurchaseOrderDetails from "./pages/Store/PurchaseOrderDetails";
+import GRNDetails from "./pages/Store/GRNDetails";
 import GRN from "./pages/Store/GRN";
 import NewGRN from "./pages/Store/NewGRN";
 
@@ -240,6 +241,24 @@ function App() {
         ) : (
           <Route
             path="/purchase-order"
+            exact
+            element={<Navigate replace to="/login" />}
+          />
+        )}
+
+        {user ? (
+          user.operator.role === "store" || user.operator.role==="senior" ? (
+            <Route path="/GRN/:grnNumber" element={<GRNDetails />} />
+          ) : (
+            <Route
+              path="/GRN/:grnNumber"
+              exact
+              element={<Navigate replace to="/" />}
+            />
+          )
+        ) : (
+          <Route
+            path="/GRN/:grnNumber"
             exact
             element={<Navigate replace to="/login" />}
           />

@@ -8,12 +8,15 @@ import Table from "react-bootstrap/Table";
 import jwt from 'jwt-decode'
 import toast from "react-hot-toast";
 import Layout from '../../components/Layout'
+import { useNavigate } from "react-router-dom";
 
 function NewGRN() {
     const [poNumber, setpoNumber] = useState();
     const [poDetails, setPoDetails] = useState();
     const token = localStorage.getItem("token");
     var operator;
+
+    const navigate = useNavigate()
 
     if (token) {
       operator = jwt(token).operator;
@@ -29,22 +32,30 @@ function NewGRN() {
       : "primary";
 
       const [GRN, setGRN] = useState({
-        poDetails: {},
-        invoice: {
-          invoiceNumber: '',
-          invoiceDate: '',
-        },
+        poNumber:'',
+        supplierName:'',
+        supplierAddress:'',
+        invoiceNumber: '',
+        invoiceDate: '',
         deliveryDate:'',
         GRNNumber: '',
-        GRNType: '',
-        GRNItem: [],
+        GRNType: 'Partial GRN',
         operator: operator,
       })
 
+      const [ GRNItem, setGRNItem ] = useState([])
+
+
+      let updateInput = (e) => {
+        setGRN({
+            ...GRN,
+            [e.target.name]: e.target.value,
+        });
+      };
 
       const handleLoad = async (e) => {
         e.preventDefault();
-        console.log(poNumber)
+        // console.log(poNumber)
         try {
           const response = await axios.post('/api/store/get-purchase-order-details-from-poNumber', {poNumber:poNumber},
                  {
@@ -56,6 +67,8 @@ function NewGRN() {
           if(response.data.success){
             toast.success(response.data.message);
             setPoDetails(response.data.data);
+            setGRN({...GRN,poNumber:response.data.data.poNumber, supplierName: response.data.data.supplier.Name, supplierAddress : response.data.data.supplier.oAddress})
+            setGRNItem(response.data.data.item)
           } else {
             toast.error(response.data.message);
           }
@@ -67,8 +80,8 @@ function NewGRN() {
 
       const handleChange = (e,id) => {
         var newGRNItem = [];
-
-        GRN.GRNItem.map(item => {
+        
+        GRNItem.map(item => {
           if(item.id == id){
             if(e.target.name == 'batchNo' || e.target.name == 'expiryDate'){
               item[e.target.name] = e.target.value;
@@ -79,45 +92,37 @@ function NewGRN() {
           newGRNItem = [...newGRNItem, item];
         })
 
-
-        var newGRN = {
-          poDetails: poDetails && poDetails,
-          invoice: {
-            invoiceNumber: '',
-            invoiceDate: '',
-          },
-          deliveryDate:'',
-          GRNNumber: '',
-          GRNType: '',
-          GRNItem: newGRNItem,
-          operator: operator,
-        }
-        setGRN(newGRN);
+        setGRNItem(newGRNItem);
       } 
 
-      useEffect(()=> {
-        var newGRN = {
-          poDetails: poDetails && poDetails,
-          invoice: {
-            invoiceNumber: '',
-            invoiceDate: '',
-          },
-          deliveryDate:'',
-          GRNNumber: '',
-          GRNType: '',
-          GRNItem: poDetails && poDetails.item,
-          operator: operator,
+      const handleClick = async() => {
+        try {
+          const response = await axios.post('/api/store/save-grn', {GRN, GRNItem},
+                 {
+                   headers: {
+                     Authorization: `Bearer ${localStorage.getItem("token")}`,
+                   },
+                 }
+               );
+          if(response.data.success){
+            toast.success(response.data.message);
+            navigate('/grn')
+          } else {
+            toast.error(response.data.message);
+          }
+        } catch (err) {
+          console.log(err.message);
         }
-        setGRN(newGRN);
-      },[poDetails])
+      }
 
-console.log(poDetails && poDetails)
-console.log(GRN && GRN)
+// console.log(poDetails && poDetails)
+// console.log(GRN && GRN)
 
   return (
     <>
         <Layout />
         <Container>
+            962999
             <h1 className={`shadow-sm text-{${color}} mt-5 p-3`}>New GRN</h1>
 
             <Form>
@@ -152,7 +157,7 @@ console.log(GRN && GRN)
             </Form.Label>
             <Col sm="4">
               <Form.Control
-                name="OperName"
+                name="supplierName"
                 type="text"
                 disabled
                 value={poDetails && poDetails?.supplier?.Name}
@@ -165,6 +170,7 @@ console.log(GRN && GRN)
             <Col sm="4">
               <Form.Group className="mb-3" controlId="formGridAddress">
                 <Form.Control
+                  name="supplierAddress"
                   as="textarea"
                   rows={3}
                   disabled
@@ -182,6 +188,7 @@ console.log(GRN && GRN)
               <Form.Control
                 name="invoiceNumber"
                 type="text"
+                onChange={updateInput}
               />
             </Col>
 
@@ -192,6 +199,7 @@ console.log(GRN && GRN)
               <Form.Control
                 name="invoiceDate"
                 type="date"
+                onChange={updateInput}
               />
             </Col>            
           </Form.Group>
@@ -205,6 +213,7 @@ console.log(GRN && GRN)
               <Form.Control
                 name="GRNNumber"
                 type="text"
+                onChange={updateInput}
               />
             </Col>  
 
@@ -215,6 +224,7 @@ console.log(GRN && GRN)
               <Form.Control
                 name="deliveryDate"
                 type="date"
+                onChange={updateInput}
               />
             </Col>          
           </Form.Group>
@@ -225,7 +235,7 @@ console.log(GRN && GRN)
               GRN Type
             </Form.Label>
             <Col sm="4">
-            <Form.Select aria-label="Default select example" name="GRNType">
+            <Form.Select aria-label="Default select example" name="GRNType" onChange={updateInput}>
                 <option value="Partial GRN">Partial GRN</option>
                 <option value="Complete GRN">Complete GRN</option>
             </Form.Select>
@@ -251,7 +261,7 @@ console.log(GRN && GRN)
         <tbody>
           {poDetails && poDetails?.item.map((item, index) => {
             return (
-              <tr>
+              <tr key={index}>
                 <td>{index + 1}</td>
                 <td>{item.name}</td>
                 <td>
@@ -303,6 +313,10 @@ console.log(GRN && GRN)
           })}
         </tbody>
       </Table>
+
+             <Button variant="success" className="col-12 mb-3" onClick={(e) => handleClick(e)}>Save</Button>
+             <Button variant="danger" className="col-12 mb-3" onClick={() => navigate('/grn')  }>Back</Button>
+    
 
         </Container>
     </>

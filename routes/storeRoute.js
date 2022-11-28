@@ -11,6 +11,7 @@ const Supplier = require("../models/supplierModel");
 const mongoose = require("mongoose");
 const authMiddleware = require("../middlewares/authMiddleware");
 const PurchaseOrder = require("../models/purchaseOrderModel");
+const GRNmodel = require("../models/grnModel");
 
 router.get("/get-all-item-group", authMiddleware, async (req, res) => {
   try {
@@ -427,7 +428,6 @@ router.post("/filter-pur-order", authMiddleware, async (req, res) => {
 });
 
 
-//GRN
 router.post('/get-purchase-order-details-from-poNumber', authMiddleware, async (req, res) => {
   try {
     console.log(req.body.poNumber)
@@ -444,5 +444,72 @@ router.post('/get-purchase-order-details-from-poNumber', authMiddleware, async (
   }
 })
 
+router.get("/get-all-grn", authMiddleware, async (req, res) => {
+  try {
+    const GRN = await GRNmodel.find()
+      
+    res.status(200).send({message:"Purchase Orders Fetched", success: true, data: GRN});
+  } catch (error) {
+    console.log(error);
+    res
+      .status(500)
+      .send({ message: "Error Fetching Purchase Orders", success: false, error });
+  }
+});
+
+router.post('/save-grn',authMiddleware, async(req,res) => {
+
+  try {
+    var GRN = req.body.GRN
+    var GRNItem = req.body.GRNItem
+
+    console.log('inside')
+
+    const newGRN = new GRNmodel({
+      poNumber:GRN.poNumber,
+      supplierName: GRN.supplierName,
+      supplierAddress: GRN.supplierAddress,
+      invoiceNumber: GRN.invoiceNumber,
+      invoiceDate: GRN.invoiceDate,
+      deliveryDate: GRN.deliveryDate,
+      GRNNumber: GRN.GRNNumber,
+      GRNType: GRN.GRNType,
+      operator: GRN.operator,
+      GRNItem: GRNItem,
+    })
+
+    console.log(newGRN)
+
+    await newGRN.save()
+      
+    res.status(200).send({message:"GRN Saved", success: true});
+  } catch (error) {
+    console.log(error);
+    res
+      .status(500)
+      .send({ message: "Error saving GRN", success: false, error });
+  }
+
+})
+
+router.get('/get-grn-detial/:grnNumber',authMiddleware, async(req,res) => {
+
+  console.log('inside')
+  console.log(req.params)
+  try{
+
+    const GRNDetail = await GRNmodel.findOne({ GRNNumber: req.params.grnNumber })
+
+    console.log(GRNDetail)
+
+    res.status(200).send({message:"GRN Saved", success: true, data:GRNDetail});
+  } catch (error) {
+    console.log(error);
+    res
+      .status(500)
+      .send({ message: "Error saving GRN", success: false, error });
+  }
+
+})
 
 module.exports = router;

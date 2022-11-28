@@ -17,6 +17,11 @@ function NewPurchaseOrder() {
     const [POItem, setPOItem] = useState([]);
     const [totalAmount,setTotalAmount] = useState(0);
     const token = localStorage.getItem("token");
+    // const [ finalAmount, setFinalAmount ] = useState(0)
+    // const [ netAmount, setNetAmount ] = useState(0)
+    // const [ gstAmount, setGstAmount ] = useState(0)
+
+
   var operator;
 
   if (token) {
@@ -40,9 +45,9 @@ function NewPurchaseOrder() {
       MODispatch: "Direct dispatch by vendor",
       PTandC: "10 days payment",
       remarks: "",
-      DelDateFrom : "SIMS vadapalani",
+      DelDateFrom : "",
       DelDateTo : "" ,
-      DelTo : "" ,
+      DelTo : "SIMS vadapalani" ,
     });
 
     const getAllSuppliers = async () => {
@@ -139,22 +144,48 @@ function NewPurchaseOrder() {
           // discounted_price = original_price - (original_price * discount / 100)
           item.discountAmount = item.rate;
           item.discountAmount = item.rate && item.discountPercentage && item.rate - (item.rate * item.discountPercentage / 100);
-          item.discountAmount = item.discountAmount && parseFloat(item.discountAmount).toFixed(2);
-          
-          // GST Amount = (Original Cost*GST Rate Percentage) / 100
-          item.GSTAmount = item.rate && item.rate;
+          item.discountAmount = item.discountAmount && Math.round(item.discountAmount*100)/100;
+
+          item.GSTAmount = item.rate;
           item.GSTAmount = item.rate && item.GSTPercentage && (item.rate * item.GSTPercentage / 100);
-          
+
           //Net Amount and Total Amount
-          item.netAmount = item.discountAmount && item.GSTAmount && (item.discountAmount+item.GSTAmount).toFixed(2);
+          item.netAmount = item.discountAmount && item.GSTAmount && Math.round((item.discountAmount + item.GSTAmount)*100)/100;
+          // console.log(typeof(item.discountAmount), typeof(item.GSTAmount))
           item.totalAmount = item.netAmount && Math.round(item.netAmount);
+
           newPOItem = [...newPOItem, item];
         })
 
-        console.log(newPOItem)
+        // console.log(newPOItem)
         setPOItem(newPOItem);
 
       } 
+
+      // const handleOtherChange = (e,id) => {
+      //   var newPOItem = [];
+
+      //   POItem.map(item => {
+      //     if(item.id == id){
+      //       item[e.target.name] = parseInt(e.target.value);
+      //     } 
+      //     // GST Amount = (Original Cost*GST Rate Percentage) / 100
+      //     item.GSTAmount = item.rate;
+      //     item.GSTAmount = item.rate && item.GSTPercentage && (item.rate * item.GSTPercentage / 100);
+
+      //     //Net Amount and Total Amount
+      //     item.netAmount = item.discountAmount && item.GSTAmount && Math.round((item.discountAmount + item.GSTAmount)*100)/100;
+      //     // console.log(typeof(item.discountAmount), typeof(item.GSTAmount))
+      //     item.totalAmount = item.netAmount && Math.round(item.netAmount);
+
+      //     console.log(item.netAmount, item.totalAmount)
+      //     newPOItem = [...newPOItem, item];
+      //   })
+
+      //   // console.log(newPOItem)
+      //   setPOItem(newPOItem);
+
+      // } 
     
       const calculateTotalAmount = () => {
         var total = 0;

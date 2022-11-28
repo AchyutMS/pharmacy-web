@@ -11,6 +11,7 @@ import Card from "react-bootstrap/Card";
 
 function GRN() {
   const navigate = useNavigate();
+  const [ allGRN, setAllGRN ] = useState([])
 
   const token = localStorage.getItem("token");
   var operator;
@@ -27,9 +28,30 @@ function GRN() {
       ? "success"
       : "primary";
 
+  
+      const getAllGRNDetails = async () => {
+        try {
+          const response = await axios.get("/api/store/get-all-grn", {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          });
+          if (response.data.success) {
+            toast.success(response.data.message);
+            setAllGRN(response.data.data);
+          } else {
+            toast.error(response.data.message);
+          }
+        } catch (err) {
+          console.log(err);
+        }
+      };
+
+      console.log(allGRN)
+
 
   useEffect(() => {
-
+    getAllGRNDetails()
   }, []);
 
   return (
@@ -45,6 +67,85 @@ function GRN() {
           </a>
         </div>
 
+        <Form>
+          <Form.Group
+            as={Row}
+            className="mb-3"
+            controlId="formPlaintextPhoneNumber"
+          >
+            <Form.Label column sm="2">
+              Purchase Order Number
+            </Form.Label>
+            <Col sm="4">
+              <Form.Control
+                name="poNumber"
+                type="number"
+                autoComplete="off"
+                placeholder="Enter PO number"
+                // onChange={(e) => setPoNumber(e.target.value)}
+              />
+            </Col>
+            <Form.Label column sm="2">
+              GRN Number
+            </Form.Label>
+            <Col sm="4">
+              <Form.Control
+                name="poNumber"
+                type="number"
+                autoComplete="off"
+                placeholder="Enter PO number"
+                // onChange={(e) => setPoNumber(e.target.value)}
+              />
+            </Col>
+          </Form.Group>
+          <Col sm="2">
+            <Button
+              variant={`${color}`}
+              // type="submit"
+              // onClick={getPoDetails}
+            >
+              Apply filter
+            </Button>
+          </Col>
+        </Form>
+
+
+
+        <Table striped bordered hover responsive="sm" center>
+        <thead>
+          <tr>
+            <th>PO Number</th>
+            <th>GRN Number</th>
+            <th>Supplier Name</th>
+            <th>View</th>
+           
+          </tr>
+        </thead>
+        <tbody>
+        {allGRN &&
+          allGRN.map((GRN) => {
+              return (
+                <tr>
+                <td>{GRN.poNumber}</td>
+                <td>{GRN.GRNNumber}</td>
+                <td>{GRN.supplierName}</td>
+                <td>
+                  <Button
+                      variant={`${color}`}
+                      size="sm"
+                      onClick={() =>
+                        navigate(`/GRN/${GRN.GRNNumber}`)
+                      }
+                    >
+                      View
+                  </Button>
+                </td>
+                
+                </tr>
+              )})}
+        </tbody>
+      </Table>
+      
     </Container>
     </>
   );

@@ -67,14 +67,6 @@ function PurchaseOrder() {
   };
 
 
-
-
-
-
-
-
-
-
   const getPoDetails = async () => {
     try {
       const response = await axios.post("/api/store/filter-pur-order", {fromDate, toDate, poNumber, supplierName}, {
@@ -94,12 +86,6 @@ function PurchaseOrder() {
       console.log(err);
     }
   }
-
-
-
-
-
-
 
 
 

@@ -41,6 +41,7 @@ function PurchaseOrderDetails() {
       );
       if (response.data.success) {
         toast.success("Records fetched Successfully");
+        console.log(response.data.data)
         setPoDetails(response.data.data);
       } else {
         console.log("No records found");
@@ -126,11 +127,9 @@ function PurchaseOrderDetails() {
           <tr>
             <th>S.No</th>
             <th>Item Name</th>
-            <th>Units</th>
-            <th>Contains</th>
             <th>QTY</th>
-            <th>Rate</th>
             <th>Rate/Unit</th>
+            <th>Rate</th>
             <th>Discount(%)</th>
             <th>GST(%)</th>
             <th>Discount Amount</th>
@@ -150,15 +149,13 @@ function PurchaseOrderDetails() {
               <tr>
                 <td>{index + 1}</td>
                 <td>{item.name}</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
+                <td>{item.qty}</td>
+                <td>{item.ratePerUnit}</td>
+                <td>{item.rate}</td>
+                <td>{item.discountPercentage}</td>
+                <td>{item.GSTPercentage}</td>
+                <td>{item.discountAmount}</td>
+                <td>{item.GSTAmount}</td>
                 <td>{item.PurchasePrice}</td>
                 <td>{item.sellingprice}</td>
                 <td>{item.hsncode}</td>
@@ -181,7 +178,7 @@ function PurchaseOrderDetails() {
             <Col sm="4">
               <Form.Control
                 disabled
-                name="OperName"
+                name="MOPay"
                 type="text"
                 value={poDetails?.purDetails.MOPay}
               />
@@ -193,7 +190,7 @@ function PurchaseOrderDetails() {
             <Col sm="4">
               <Form.Control
                 disabled
-                name="OperName"
+                name="MODispatch"
                 type="text"
                 value={poDetails?.purDetails.MODispatch}
               />
@@ -207,7 +204,7 @@ function PurchaseOrderDetails() {
             <Col sm="4">
               <Form.Control
                 disabled
-                name="OperName"
+                name="PTandC"
                 type="text"
                 value={poDetails?.purDetails.PTandC}
               />
@@ -219,7 +216,7 @@ function PurchaseOrderDetails() {
             <Col sm="4">
               <Form.Control
                 disabled
-                name="OperName"
+                name="DelTo"
                 type="text"
                 value={poDetails?.purDetails.DelTo}
               />
@@ -233,7 +230,7 @@ function PurchaseOrderDetails() {
             <Col sm="4">
               <Form.Control
                 disabled
-                name="OperName"
+                name="DelDateFrom"
                 type="text"
                 value={poDetails?.purDetails.DelDateFrom}
               />
@@ -245,7 +242,7 @@ function PurchaseOrderDetails() {
             <Col sm="4">
               <Form.Control
                 disabled
-                name="OperName"
+                name="DelDateTo"
                 type="text"
                 value={poDetails?.purDetails.DelDateTo}
               />
@@ -259,6 +256,7 @@ function PurchaseOrderDetails() {
             <Col sm="4">
               <Form.Group className="mb-3" controlId="formGridAddress">
                 <Form.Control
+                disabled
                   name="remarks"
                   as="textarea"
                   rows={3}
