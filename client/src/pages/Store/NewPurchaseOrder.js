@@ -143,7 +143,7 @@ function NewPurchaseOrder() {
           
           // discounted_price = original_price - (original_price * discount / 100)
           item.discountAmount = item.rate;
-          item.discountAmount = item.rate && item.discountPercentage && item.rate - (item.rate * item.discountPercentage / 100);
+          item.discountAmount = item.rate && item.discountPercentage && item.discountPercentage!=0 ? item.rate - (item.rate * item.discountPercentage / 100) : item.rate;
           item.discountAmount = item.discountAmount && Math.round(item.discountAmount*100)/100;
 
           item.GSTAmount = item.rate;
