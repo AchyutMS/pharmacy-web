@@ -169,6 +169,10 @@ function PurchaseOrderDetails() {
         </tbody>
       </Table>
 
+      <h2 className={`shadow-sm text-{${color}} mt-5 p-3`}>
+        Total Amount: Rs. {poDetails?.poTotal}
+      </h2>
+
       <Container className="mt-5">
         <Form>
           <Form.Group as={Row} className="mb-3" controlId="formPlaintextName">

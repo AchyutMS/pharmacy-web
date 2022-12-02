@@ -427,15 +427,18 @@ router.post("/filter-pur-order", authMiddleware, async (req, res) => {
   }
 });
 
-
 router.post('/get-purchase-order-details-from-poNumber', authMiddleware, async (req, res) => {
   try {
     console.log(req.body.poNumber)
       const purchaseOrder = await PurchaseOrder.findOne({poNumber: req.body.poNumber})
       if(purchaseOrder){
-        res.status(200).send({ message: "Purchase Order details Fetched successfully", success: true, data: purchaseOrder});
+        if(purchaseOrder.isApproved){
+          res.status(200).send({ message: "Purchase Order details Fetched successfully", success: true, data: purchaseOrder});
+        } else {
+          res.status(200).send({ message: "Purchase Order Not Approved", success: false});
+        }
       } else {
-        res.status(200).send({ message: "Purchase Order Not Found", success: false, data: purchaseOrder});
+        res.status(200).send({ message: "Purchase Order Not Found", success: false});
       }
 
   } catch (error) {
@@ -458,10 +461,30 @@ router.get("/get-all-grn", authMiddleware, async (req, res) => {
 });
 
 router.post('/save-grn',authMiddleware, async(req,res) => {
-
   try {
     var GRN = req.body.GRN
     var GRNItem = req.body.GRNItem
+    console.log(GRN)
+
+    GRNItem.map( async (item) => {
+      var newBatch = {
+        id : item.id,
+        BatchNo: item.batchNo,
+        ExpiryDate: item.expiryDate,
+        CostPrice: item.MRP,
+        Tax: item.tax,
+        MRP: item.MRP,
+        PTax: item.tax,
+        StartDate: new Date().toLocaleString().replaceAll('/','-').replaceAll(',','').replace(' pm',''),
+        Quantity: item.recievedQuantity + item?.freeQuantity,
+        CONTAIN: "1",
+        CONTAINSCOST: "", 
+        userid: GRN.operator.OID
+      };
+
+      const batch = new ItemBatch(newBatch);
+      await batch.save();
+    })
 
     console.log('inside')
 
@@ -478,7 +501,7 @@ router.post('/save-grn',authMiddleware, async(req,res) => {
       GRNItem: GRNItem,
     })
 
-    console.log(newGRN)
+    console.log()
 
     await newGRN.save()
       
