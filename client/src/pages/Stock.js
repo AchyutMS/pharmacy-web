@@ -148,9 +148,9 @@ console.log(requestedItems)
                   <th>Item Batch</th>
                   <th>Expiry Date</th>
                   <th>Qty</th>
-                  {
+                  {/* {
                     user.operator.role == "store" ? <th>Action</th> : null
-                  }
+                  } */}
                 </tr>
               </thead>
               <tbody>
@@ -161,13 +161,13 @@ console.log(requestedItems)
                           <td>{item.BatchNo}</td>  
                           <td>{item.ExpiryDate.split(" ")[0].split('-').reverse().join('-')}</td>  
                           <td>{item.Quantity}</td>  
-                          {
+                          {/* {
                             requestedItems.includes(item.id) 
                             ?                       
                             user.operator.role == "store" ? <td><Button variant="success">Requested</Button></td> : null
                             :
                             user.operator.role == "store" ? <td><Button variant="warning" onClick={() => RequestItem(item.id)}>Request</Button></td> : null
-                          }
+                          } */}
                         </tr>  
                       )
                     })}
@@ -184,9 +184,9 @@ console.log(requestedItems)
                   <th>Item Name</th>
                   <th>Expiry Date</th>
                   <th>Qty</th>
-                  {
+                  {/* {
                     user.operator.role == "store" ? <th>Action</th> : null
-                  }
+                  } */}
                 </tr>
               </thead>
               <tbody>
@@ -197,13 +197,13 @@ console.log(requestedItems)
                           <td>{item.BatchNo}</td>  
                           <td>{item.ExpiryDate.split(" ")[0].split('-').reverse().join('-')}</td>  
                           <td>{item.Quantity}</td>  
-                          {
+                          {/* {
                             requestedItems.includes(item.id) 
                             ?                       
                             user.operator.role == "store" ? <td><Button variant="success">Requested</Button></td> : null
                             :
                             user.operator.role == "store" ? <td><Button variant="warning" onClick={() => RequestItem(item.id)}>Request</Button></td> : null
-                          }
+                          } */}
                         </tr>  
                       )
                     })}

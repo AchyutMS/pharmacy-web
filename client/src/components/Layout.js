@@ -38,10 +38,10 @@ function Layout() {
       name: "Stock",
       path: "/stock",
     },
-    {
-      name: "Check Request",
-      path: "/check-request",
-    },
+    // {
+    //   name: "Check Request",
+    //   path: "/check-request",
+    // },
     {
       name: "Supplier",
       path: "/supplier",
