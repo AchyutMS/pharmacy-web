@@ -464,17 +464,17 @@ router.post('/save-grn',authMiddleware, async(req,res) => {
   try {
     var GRN = req.body.GRN
     var GRNItem = req.body.GRNItem
-    console.log(GRN)
+    console.log(GRNItem)
 
     GRNItem.map( async (item) => {
       var newBatch = {
-        id : item.id,
+        id : item.item.id,
         BatchNo: item.batchNo,
         ExpiryDate: item.expiryDate,
         CostPrice: item.MRP,
-        Tax: item.tax,
+        Tax: item.item.tax,
         MRP: item.MRP,
-        PTax: item.tax,
+        PTax: item.item.tax,
         StartDate: new Date().toLocaleString().replaceAll('/','-').replaceAll(',','').replace(' pm',''),
         Quantity: item.recievedQuantity + item?.freeQuantity,
         CONTAIN: "1",
@@ -483,7 +483,7 @@ router.post('/save-grn',authMiddleware, async(req,res) => {
       };
 
       const batch = new ItemBatch(newBatch);
-      await batch.save();
+      // await batch.save();
     })
 
     console.log('inside')
@@ -503,7 +503,7 @@ router.post('/save-grn',authMiddleware, async(req,res) => {
 
     console.log()
 
-    await newGRN.save()
+    // await newGRN.save()
       
     res.status(200).send({message:"GRN Saved", success: true});
   } catch (error) {

@@ -166,7 +166,7 @@ function NewBill() {
       if (obj._id === id) {
         if (
           parseInt(quantity) < 1 ||
-          parseInt(quantity) > parseInt(obj.Auantity)
+          parseInt(quantity) > parseInt(obj.Quantity)
         ) {
           quantity = 1;
         } else if (quantity === "") {

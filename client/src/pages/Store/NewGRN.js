@@ -13,6 +13,7 @@ import { useNavigate } from "react-router-dom";
 function NewGRN() {
   const [poNumber, setpoNumber] = useState();
   const [poDetails, setPoDetails] = useState();
+  const [index, setIndex] = useState(0);
 
   const [search, setSearch] = useState('');
 
@@ -88,18 +89,47 @@ function NewGRN() {
     }
   };
 
-  const handleChange = (e, id) => {
+  const calculateProdCount = (i, e) => {
+    var sum=i.item.qty
+    GRNItem.map(item => {
+      if(item.item.id==i.item.id){
+        sum = sum-item.recievedQuantity
+        if(sum<0){
+          item.recievedQuantity = item.recievedQuantity + sum
+        }
+      }
+    })
+    
+    console.log(sum)
+  }
+
+  const handleChange = (e, index) => {
     var newGRNItem = [];
 
     GRNItem.map((item) => {
-      if (item.id == id) {
-        if (e.target.name == "batchNo" || e.target.name == "expiryDate") {
+      if (item.index == index) {
+        console.log(index, item.index)
+        if (e.target.name == "batchNo") {
           item[e.target.name] = e.target.value;
+        } else if (e.target.name=="expiryDate" ) {
+            if(new Date(e.target.value) < new Date() ) {
+              toast.error('Medicine has expired')
+              console.log(new Date().getFullYear() + '-' + new Date().getMonth() + 1 + '-' + new Date().getDate());
+              item[e.target.name] = "";
+            } else {
+              item[e.target.name] = e.target.value;
+            }
+
+            
         } else {
           item[e.target.name] = parseInt(e.target.value);
         }
+        newGRNItem.push(item)
+      } else {
+        newGRNItem.push(item);
       }
-      newGRNItem = [...newGRNItem, item];
+      // newGRNItem = [...newGRNItem, item];
+      calculateProdCount(item, e)
     });
 
     setGRNItem(newGRNItem);
@@ -153,18 +183,26 @@ function NewGRN() {
     }
   };
 
+  const handleItemAdd = (item) => {
+    var obj = {item}
+    obj.index = index
+    setIndex(index+1)
+    setGRNItem([...GRNItem,obj])
+  }
+
   const handleDelete = (index,e) => {
-    setGRNItem(GRNItem.filter((v, i) => i !== index));
+    setGRNItem(GRNItem.filter((item, i) => item.index !== index));
 }
 
-  console.log(poDetails && poDetails);
-  console.log(GRN && GRN);
+  // console.log(poDetails && poDetails);
+  // console.log(GRN && GRN);
   console.log("GRN ITEMS",GRNItem && GRNItem);
   console.log("PO ITEMS",poItems && poItems);
 
   return (
     <>
       <Layout />
+      313017	
       <Container>
         <h1 className={`shadow-sm text-{${color}} mt-5 p-3`}>New GRN</h1>
 
@@ -316,7 +354,7 @@ function NewGRN() {
                         //     }
                         // }
                         // }
-                        onClick = {() => setGRNItem([...GRNItem,item])}
+                        onClick = {() => handleItemAdd(item)}
                       >
                         {item.name}
                       </Card.Body>
@@ -351,14 +389,15 @@ function NewGRN() {
                 return (
                   <tr key={index}>
                     <td>{index + 1}</td>
-                    <td>{item.name}</td>
+                    <td>{item.item.name}</td>
                     <td>
                       <input
                         type="number"
                         name="recievedQuantity"
                         min={0}
                         max={100}
-                        onChange={(e) => handleChange(e, item.id)}
+                        value={item.recievedQuantity}
+                        onChange={(e) => handleChange(e, item.index)}
                         required
                       />
                     </td>
@@ -367,17 +406,19 @@ function NewGRN() {
                         type="number"
                         name="freeQuantity"
                         min="0"
-                        onChange={(e) => handleChange(e, item.id)}
+                        value={item.freeQuantity}
+                        onChange={(e) => handleChange(e, item.index)}
                         required
                       />
                     </td>
-                    <td>{item.ratePerUnit}</td>
+                    <td>{item.item.ratePerUnit}</td>
                     <td>
                       <input
                         type="number"
                         name="MRP"
                         min="0"
-                        onChange={(e) => handleChange(e, item.id)}
+                        value={item.MRP}
+                        onChange={(e) => handleChange(e, item.index)}
                         required
                       />
                     </td>
@@ -385,7 +426,8 @@ function NewGRN() {
                       <input
                         type="text"
                         name="batchNo"
-                        onChange={(e) => handleChange(e, item.id)}
+                        value={item.batchNo}
+                        onChange={(e) => handleChange(e, item.index)}
                         required
                       />
                     </td>
@@ -393,14 +435,15 @@ function NewGRN() {
                       <input
                         type="date"
                         name="expiryDate"
-                        onChange={(e) => handleChange(e, item.id)}
+                        value={item.expiryDate}
+                        onChange={(e) => handleChange(e, item.index)}
                         required
                       />
                     </td>
                     <td>
                       <Button 
                       variant="danger" 
-                      onClick={e => handleDelete(index,e)}
+                      onClick={e => handleDelete(item.index,e)}
                       >Remove
                       </Button>
                     </td>
