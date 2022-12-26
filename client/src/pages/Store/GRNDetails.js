@@ -198,10 +198,10 @@ function GRNDetails() {
             return (
               <tr key={index}>
                 <td>{index + 1}</td>
-                <td>{item.name}</td>
+                <td>{item.item.name}</td>
                 <td>{item.recievedQuantity}</td>
                 <td>{item.freeQuantity}</td>
-                <td>{item.ratePerUnit}</td>
+                <td>{item.item.ratePerUnit}</td>
                 <td>{item.MRP}</td>
                 <td>{item.batchNo}</td>
                 <td>{item.expiryDate}</td>

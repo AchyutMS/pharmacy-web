@@ -483,7 +483,7 @@ router.post('/save-grn',authMiddleware, async(req,res) => {
       };
 
       const batch = new ItemBatch(newBatch);
-      // await batch.save();
+      await batch.save();
     })
 
     console.log('inside')
@@ -503,7 +503,7 @@ router.post('/save-grn',authMiddleware, async(req,res) => {
 
     console.log()
 
-    // await newGRN.save()
+    await newGRN.save()
       
     res.status(200).send({message:"GRN Saved", success: true});
   } catch (error) {
