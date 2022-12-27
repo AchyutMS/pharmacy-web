@@ -135,31 +135,40 @@ function NewGRN() {
     setGRNItem(newGRNItem);
   };
 
-  // item[e.target.name] = parseInt(e.target.value);
-  // const handleReceivedQuantity = (e,id) => {
-  //   var newGRNItem = [];
-  //   console.log(poDetails)
 
-  //   GRNItem.map(item => {
-  //     if(item.id == id){
-  //       poDetails.item.map(i => {
-  //         if(i.id == item.id){
-  //           if(parseInt(e.target.value)>i.qty)
-  //             item[e.target.name] = i.qty;
-  //         }
-  //       })
-  //     }
-  //     newGRNItem = [...newGRNItem, item];
-  //   })
+  const checkFields = () => {
+    console.log("checkFields",GRNItem)
+    var keys = ["MRP","batchNo","expiryDate","freeQuantity","recievedQuantity"];
+    var flag = 0;
+    GRNItem.map(item => {
+      keys.map(i => {
+        if(i in item == false){
+          flag = 1;
+        } else if(item[i] == '' || item[i] == false){
+          flag = 1;
+        }
+      })
+    })
 
-  //   setGRNItem(newGRNItem);
-  //   console.log("newGRN",newGRNItem);
+    if(flag == 1){
+      return {success:false, message:"GRN Items cannot be Empty"};
+    }
 
-  // }
+    for(var key in GRN) {
+      if(GRN[key] === "") {
+         return {success:false, message:`Enter ${key}`};
+      }
+  }
+
+  return {success:true};
+    
+  }
 
   const handleClick = async () => {
     try {
-      if (GRN.GRNNumber != "") {
+      var save = checkFields();
+      console.log('save',save)
+      if (save?.success) {
         const response = await axios.post(
           "/api/store/save-grn",
           { GRN, GRNItem },
@@ -176,7 +185,7 @@ function NewGRN() {
           toast.error(response.data.message);
         }
       } else {
-        toast.error("Enter GRN Number");
+        toast.error(save.message)
       }
     } catch (err) {
       console.log(err.message);
